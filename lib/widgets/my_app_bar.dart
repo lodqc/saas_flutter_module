@@ -77,7 +77,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
       child: Container(
         alignment: centerTitle.isEmpty ? Alignment.centerLeft : Alignment.center,
         width: double.infinity,
-        margin: const EdgeInsets.symmetric(horizontal: 48.0),
+        margin: const EdgeInsets.symmetric(horizontal: 44.0),
         child: Text(
           title.isEmpty ? centerTitle : title,
           style: const TextStyle(fontSize: Dimens.font_sp16,fontWeight: FontWeight.w500),
@@ -101,5 +101,5 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(48.0);
+  Size get preferredSize => const Size.fromHeight(44.0);
 }

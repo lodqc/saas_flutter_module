@@ -42,7 +42,7 @@ class TextStyles {
   );
   static const TextStyle red14N = TextStyle(
       fontSize: Dimens.font_sp14,
-      color: Colours.red
+      color: Colours.color_FFFA5050
   );
   static const TextStyle color_FFC2C2C2_14N = TextStyle(
       fontSize: Dimens.font_sp14,
@@ -54,6 +54,10 @@ class TextStyles {
   );
   static const TextStyle color_FF222222_20M = TextStyle(
       fontSize: Dimens.font_sp20,
+      color: Colours.color_FF222222,fontWeight: FontWeight.w500
+  );
+  static const TextStyle color_FF222222_28M = TextStyle(
+      fontSize: Dimens.font_sp28,
       color: Colours.color_FF222222,fontWeight: FontWeight.w500
   );
   static const TextStyle color_FF222222_16M = TextStyle(
@@ -86,10 +90,10 @@ class TextStyles {
   );
   static const TextStyle text12N = TextStyle(
       fontSize: Dimens.font_sp12,
-      color: Colours.color_FF333333
+      color: Colours.color_FF333333,height: 1.2
   );
   static const TextStyle color_FF888888_14N = TextStyle(
       fontSize: Dimens.font_sp14,
-      color: Colours.color_FF888888
+      color: Colours.color_FF888888,height: 1.2
   );
 }

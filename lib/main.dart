@@ -3,8 +3,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
-import 'package:saas_flutter_module/cabinet/cabinet_mount_page.dart';
-import 'package:saas_flutter_module/checkin/checkin_detail_page.dart';
+import 'package:saas_flutter_module/checkin/checkin_page.dart';
 import 'package:saas_flutter_module/net/dio_utils.dart';
 import 'package:saas_flutter_module/net/intercept.dart';
 import 'package:saas_flutter_module/provider/theme_provider.dart';
@@ -100,7 +99,7 @@ class MyApp extends StatelessWidget {
       theme: theme ?? provider.getTheme(),
       darkTheme: provider.getTheme(isDarkMode: true),
       themeMode: provider.getThemeMode(),
-      home: CheckInDetailPage(),
+      home: CheckInPage(),
       onGenerateRoute: Routes.router.generator,
       navigatorKey: navigatorKey,
       builder: (BuildContext context, Widget? child) {

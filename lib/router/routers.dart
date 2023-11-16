@@ -1,6 +1,7 @@
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:saas_flutter_module/cabinet/cabinet_mount_page.dart';
+import 'package:saas_flutter_module/checkin/check_in_router.dart';
 import 'package:saas_flutter_module/router/i_router.dart';
 import 'package:saas_flutter_module/router/not_found_page.dart';
 
@@ -32,14 +33,7 @@ class Routes {
 
     _listRouter.clear();
     /// 各自路由由各自模块管理，统一在此添加初始化
-    // _listRouter.add(ShopRouter());
-    // _listRouter.add(LoginRouter());
-    // _listRouter.add(GoodsRouter());
-    // _listRouter.add(OrderRouter());
-    // _listRouter.add(StoreRouter());
-    // _listRouter.add(AccountRouter());
-    // _listRouter.add(SettingRouter());
-    // _listRouter.add(StatisticsRouter());
+    _listRouter.add(CheckInRouter());
   
     /// 初始化路由
     void initRouter(IRouterProvider routerProvider) {

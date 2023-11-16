@@ -43,7 +43,7 @@ class ThemeProvider extends ChangeNotifier {
       colorScheme: ColorScheme.fromSwatch().copyWith(
         brightness: isDarkMode ? Brightness.dark : Brightness.light,
         secondary: isDarkMode ? Colours.dark_app_main : Colours.app_main,
-        error: isDarkMode ? Colours.dark_red : Colours.red,
+        error: isDarkMode ? Colours.dark_red : Colours.color_FFFA5050,
       ),
       // Tab指示器颜色
       indicatorColor: isDarkMode ? Colours.dark_app_main : Colours.app_main,

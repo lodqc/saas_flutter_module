@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Colours {
-  static const Color app_main = Color(0xFF4688FA);
+  static const Color app_main = Color(0xFF333333);
   static const Color dark_app_main = Color(0xFF3F7AE0);
 
   static const Color bg_color = Color(0xfff1f1f1);
@@ -25,7 +25,7 @@ class Colours {
   static const Color line = Color(0xFFEEEEEE);
   static const Color dark_line = Color(0xFF3A3C3D);
 
-  static const Color red = Color(0xFFFA5050);
+  static const Color color_FFFA5050 = Color(0xFFFA5050);
   static const Color dark_red = Color(0xFFE03E4E);
   static const Color button_disabled = Color(0xFFC2C2C2);
   static const Color button_enable = Color(0xFF000000);
@@ -49,4 +49,6 @@ class Colours {
   static const Color color_FFC2E4FF = Color(0xFFC2E4FF);
   static const Color color_FF484848 = Color(0xFF484848);
   static const Color color_FF888888 = Color(0xFF888888);
+  static const Color color_FF75BAFF = Color(0xFF75BAFF);
+  static const Color color_FFE8F6FF = Color(0xFFE8F6FF);
 }
