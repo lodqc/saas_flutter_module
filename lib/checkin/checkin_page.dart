@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:saas_flutter_module/checkin/check_in_router.dart';
 import 'package:saas_flutter_module/res/resources.dart';
@@ -5,7 +7,6 @@ import 'package:saas_flutter_module/router/fluro_navigator.dart';
 import 'package:saas_flutter_module/util/other_utils.dart';
 import 'package:saas_flutter_module/widgets/my_app_bar.dart';
 import 'package:saas_flutter_module/widgets/my_button.dart';
-import 'package:saas_flutter_module/widgets/my_refresh_list.dart';
 import 'package:saas_flutter_module/widgets/my_scroll_view.dart';
 import 'package:saas_flutter_module/widgets/my_text_field.dart';
 
@@ -25,7 +26,7 @@ class _CheckInPageState extends State<CheckInPage> {
     return Scaffold(
       body: MyScrollView(
         keyboardConfig:
-            Utils.getKeyboardActionsConfig(context, <FocusNode>[_nodeText1]),
+        Utils.getKeyboardActionsConfig(context, <FocusNode>[_nodeText1]),
         children: [
           Container(
             child: Stack(
@@ -33,13 +34,18 @@ class _CheckInPageState extends State<CheckInPage> {
                 Container(
                   decoration: BoxDecoration(
                       gradient: LinearGradient(colors: [
-                    Colours.color_FF75BAFF,
-                    Colours.color_FFE8F6FF
-                  ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
+                        Colours.color_FF75BAFF,
+                        Colours.color_FFE8F6FF
+                      ],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter)),
                   height: 224,
                 ),
                 Container(
-                  height: 44 + MediaQuery.of(context).padding.top,
+                  height: 44 + MediaQuery
+                      .of(context)
+                      .padding
+                      .top,
                   child: MyAppBar(
                     title: "巡检打卡",
                     backgroundColor: Colors.transparent,
@@ -91,14 +97,20 @@ class _CheckInPageState extends State<CheckInPage> {
                         top: 12,
                       ),
                       Positioned(
-                        child: Row(
-                          children: [
-                            Text(
-                              "查询打卡明细",
-                              style: TextStyles.color_FF888888_14N,
-                            ),
-                            Images.arrowRight
-                          ],
+                        child: InkWell(
+                          child: Row(
+                            children: [
+                              Text(
+                                "查询打卡明细",
+                                style: TextStyles.color_FF888888_14N,
+                              ),
+                              Images.arrowRight
+                            ],
+                          ),
+                          onTap: () {
+                            NavigatorUtils.push(
+                                context, CheckInRouter.CHECK_IN_DETAIL_PAGE);
+                          },
                         ),
                         right: 8,
                         top: 12,
@@ -115,7 +127,7 @@ class _CheckInPageState extends State<CheckInPage> {
                                 constraints: BoxConstraints.expand(),
                                 child: Stack(
                                   alignment:
-                                      Alignment.center, //指定未定位或部分定位widget的对齐方式
+                                  Alignment.center, //指定未定位或部分定位widget的对齐方式
                                   children: <Widget>[
                                     Positioned(
                                       top: 24,
@@ -144,7 +156,7 @@ class _CheckInPageState extends State<CheckInPage> {
                                 constraints: BoxConstraints.expand(),
                                 child: Stack(
                                   alignment:
-                                      Alignment.center, //指定未定位或部分定位widget的对齐方式
+                                  Alignment.center, //指定未定位或部分定位widget的对齐方式
                                   children: <Widget>[
                                     Positioned(
                                       top: 24,
@@ -218,8 +230,9 @@ class _CheckInPageState extends State<CheckInPage> {
                         margin: EdgeInsets.only(left: 8, right: 8, top: 27),
                         child: MyButton(
                           text: "确定打卡",
-                          onPressed: () {
-                            NavigatorUtils.push(context, CheckInRouter.CHECK_IN_DETAIL_PAGE);
+                          onPressed: () async {
+                            bool? confirm = await showListDialog();
+                            print("fq:$confirm");
                           },
                         ),
                       ),
@@ -246,6 +259,71 @@ class _CheckInPageState extends State<CheckInPage> {
           )
         ],
       ),
+    );
+  }
+
+  Future<bool?> showListDialog() {
+    return showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+            child: Container(
+              width: 311,
+              height: 318,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(4),
+                  color: Colours.color_FFFFFFFF),
+              child: Column(
+                children: [
+                  Images.ic_check_in_3,
+                  Padding(
+                    padding: EdgeInsets.only(top: 24),
+                    child: Text(
+                      "打卡成功！",
+                      style: TextStyles.color_FF222222_18M,
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 12),
+                    child: Text(
+                      "今日已完成该电柜巡检。",
+                      style: TextStyles.color_FF333333_14N,
+                    ),
+                  ),
+                  Visibility(
+                    child: Text(
+                      "电柜SN：S0200BT22900002",
+                      style: TextStyles.color_FF333333_14N,
+                    ),
+                    visible: true,
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Container(),
+                  ),
+                  InkWell(
+                    child: Container(
+                      width: 311,
+                      height: 56,
+                      decoration: BoxDecoration(
+                          border: Border(
+                              top: BorderSide(
+                                  color: Colours.color_FFF0F0F0, width: 1))),
+                      child: Center(
+                        child: Text(
+                          "确认",
+                          style: TextStyles.text16N,
+                        ),
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.of(context).pop(true);
+                    },
+                  )
+                ],
+              ),
+            ));
+      },
     );
   }
 }
