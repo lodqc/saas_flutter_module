@@ -1,23 +1,8 @@
-import 'dart:async';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart' as launcher;
-
-@pragma('vm:entry-point')
-void checkListPage(){
-  runZonedGuarded(() {
-    runApp(MyApp(color: Colors.green),);
-    ///屏幕刷新率和显示率不一致时的优化，必须挪动到 runApp 之后
-    GestureBinding.instance.resamplingEnabled = true;
-  }, (Object obj, StackTrace stack) {
-    print(obj);
-    print(stack);
-  });
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key, required this.color});
+class CheckListPage extends StatelessWidget {
+  const CheckListPage({super.key, required this.color});
 
   final MaterialColor color;
 

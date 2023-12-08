@@ -3,6 +3,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
+import 'package:saas_flutter_module/amap.dart';
+import 'package:saas_flutter_module/check_list.dart';
 import 'package:saas_flutter_module/checkin/checkin_page.dart';
 import 'package:saas_flutter_module/net/dio_utils.dart';
 import 'package:saas_flutter_module/net/intercept.dart';
@@ -31,6 +33,11 @@ Future<void> main() async {
     GestureBinding.instance.resamplingEnabled = true;
   });
 }
+
+@pragma('vm:entry-point')
+void aMapPage() => runApp(AMapPage());
+@pragma('vm:entry-point')
+void checkListPage() => runApp(CheckListPage(color: Colors.purple));
 
 class MyApp extends StatelessWidget {
   MyApp({super.key, this.theme}) {

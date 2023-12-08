@@ -50,6 +50,8 @@ dependencies:
   device_info_plus: 9.0.2
   #  城市选择器 https://github.com/longer96/flutter_pickers#%E6%A0%B7%E5%BC%8F
   flutter_pickers: ^2.1.8
+  # amap
+  amap_flutter_map: ^3.0.0
 
 # https://github.com/simplezhli/flutter_deer/issues/187
 dependency_overrides:
