@@ -106,7 +106,7 @@ class MyApp extends StatelessWidget {
       theme: theme ?? provider.getTheme(),
       darkTheme: provider.getTheme(isDarkMode: true),
       themeMode: provider.getThemeMode(),
-      home: CheckInPage(),
+      home: AMapPage(),
       onGenerateRoute: Routes.router.generator,
       navigatorKey: navigatorKey,
       builder: (BuildContext context, Widget? child) {

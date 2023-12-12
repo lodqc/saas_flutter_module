@@ -38,7 +38,7 @@ class TextStyles {
 
   static const TextStyle text14N = TextStyle(
       fontSize: Dimens.font_sp14,
-      color: Colours.color_FF333333
+      color: Colours.color_FF333333, decoration: TextDecoration.none
   );
   static const TextStyle red14N = TextStyle(
       fontSize: Dimens.font_sp14,
@@ -95,5 +95,9 @@ class TextStyles {
   static const TextStyle color_FF888888_14N = TextStyle(
       fontSize: Dimens.font_sp14,
       color: Colours.color_FF888888,height: 1.2
+  );
+  static const TextStyle color_FF888888_12N = TextStyle(
+      fontSize: Dimens.font_sp12,
+      color: Colours.color_FF888888,height: 1.2, decoration: TextDecoration.none
   );
 }

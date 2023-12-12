@@ -53,6 +53,11 @@ class Images {
     height: 16,
     width: 16,
   );
+  static const Widget ic_battery1 = LoadAssetImage(
+    'ic_battery1',
+    height: 24,
+    width: 24,
+  );
   static const Widget ic_check_in_3 = LoadAssetImage(
     'ic_check_in_3',
     height: 128,
