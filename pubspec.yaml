@@ -44,14 +44,14 @@ dependencies:
   cached_network_image: ^3.3.0
   # 格式化String https://github.com/Naddiseo/dart-sprintf
   sprintf: ^7.0.0
-  # 状态管理 https://github.com/rrousselGit/provider
-  provider: ^6.0.5
   # 获取当前设备信息 https://github.com/fluttercommunity/plus_plugins/tree/main/packages/device_info_plus
   device_info_plus: 9.0.2
   #  城市选择器 https://github.com/longer96/flutter_pickers#%E6%A0%B7%E5%BC%8F
   flutter_pickers: ^2.1.8
   # amap
   amap_flutter_map: ^3.0.0
+  # 状态管理
+  flutter_riverpod: ^2.4.9
 
 # https://github.com/simplezhli/flutter_deer/issues/187
 dependency_overrides:
@@ -101,5 +101,3 @@ flutter:
     androidX: true
     androidPackage: com.immotor.flutter.saas_flutter_module
     iosBundleIdentifier: com.immotor.flutter.saasFlutterModule
-flutter_intl:
-  enabled: true

@@ -1,16 +1,19 @@
+import 'package:common_utils/common_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:saas_flutter_module/checkin/checkin_provider.dart';
 import 'package:saas_flutter_module/res/resources.dart';
 import 'package:saas_flutter_module/widgets/my_app_bar.dart';
 import 'package:saas_flutter_module/widgets/my_refresh_list.dart';
 
-class CheckInDetailPage extends StatefulWidget {
+class CheckInDetailPage extends ConsumerStatefulWidget {
   CheckInDetailPage({Key? key}) : super(key: key);
 
   @override
   _CheckInDetailPageState createState() => _CheckInDetailPageState();
 }
 
-class _CheckInDetailPageState extends State<CheckInDetailPage> {
+class _CheckInDetailPageState extends ConsumerState<CheckInDetailPage> {
   int _page = 1;
   List<String> _list = <String>[];
   final int _maxPage = 3;
@@ -19,6 +22,7 @@ class _CheckInDetailPageState extends State<CheckInDetailPage> {
   void initState() {
     super.initState();
     _onRefresh();
+    ref.read(myProvider);
   }
 
   Future<void> _onRefresh() async {
@@ -55,6 +59,8 @@ class _CheckInDetailPageState extends State<CheckInDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    var value = ref.watch(myProvider);
+    LogUtil.e(value);
     return Scaffold(
       body: NotificationListener(
         child: RefreshIndicator(

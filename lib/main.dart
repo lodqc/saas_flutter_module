@@ -1,11 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:oktoast/oktoast.dart';
-import 'package:provider/provider.dart';
 import 'package:saas_flutter_module/amap.dart';
 import 'package:saas_flutter_module/check_list.dart';
-import 'package:saas_flutter_module/checkin/checkin_page.dart';
+import 'package:saas_flutter_module/checkin/checkin_detail_page.dart';
 import 'package:saas_flutter_module/net/dio_utils.dart';
 import 'package:saas_flutter_module/net/intercept.dart';
 import 'package:saas_flutter_module/provider/theme_provider.dart';
@@ -16,6 +16,7 @@ import 'package:saas_flutter_module/util/handle_error_utils.dart';
 import 'package:saas_flutter_module/util/log_utils.dart';
 import 'package:sp_util/sp_util.dart';
 import 'package:url_strategy/url_strategy.dart';
+
 Future<void> main() async {
   /// 异常处理
   handleError(() async {
@@ -28,7 +29,8 @@ Future<void> main() async {
 
     /// sp初始化
     await SpUtil.getInstance();
-    runApp(MyApp());
+    runApp(ProviderScope(child: MyApp()));
+
     ///屏幕刷新率和显示率不一致时的优化，必须挪动到 runApp 之后
     GestureBinding.instance.resamplingEnabled = true;
   });
@@ -36,65 +38,51 @@ Future<void> main() async {
 
 @pragma('vm:entry-point')
 void aMapPage() => runApp(AMapPage());
+
 @pragma('vm:entry-point')
 void checkListPage() => runApp(CheckListPage(color: Colors.purple));
 
-class MyApp extends StatelessWidget {
-  MyApp({super.key, this.theme}) {
+class MyApp extends ConsumerWidget {
+  MyApp({super.key}) {
     Log.init();
     initDio();
     Routes.initRoutes();
   }
 
-  final ThemeData? theme;
   static GlobalKey<NavigatorState> navigatorKey = GlobalKey();
 
   void initDio() {
     final List<Interceptor> interceptors = <Interceptor>[];
-
     /// 统一添加身份验证请求头
     interceptors.add(AuthInterceptor());
-
     /// 刷新Token
     interceptors.add(TokenInterceptor());
-
     /// 打印Log(生产模式去除)
     if (!Constant.inProduction) {
       interceptors.add(LoggingInterceptor());
     }
-
     /// 适配数据(根据自己的数据结构，可自行选择添加)
     interceptors.add(AdapterInterceptor());
+    // https://t-cloud-manage-api.ehuandian.net/cloud_manage/login
     configDio(
-      baseUrl: 'https://api.github.com/',
+      baseUrl: 'https://t-cloud-manage-api.ehuandian.net/',
       interceptors: interceptors,
     );
   }
 
   @override
-  Widget build(BuildContext context) {
-    final Widget app = MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => ThemeProvider()),
-      ],
-      child: Consumer<ThemeProvider>(
-        builder: (_, ThemeProvider provider, __) {
-          return _buildMaterialApp(provider);
-        },
-      ),
-    );
-
-    /// Toast 配置
+  Widget build(BuildContext context, WidgetRef ref) {
     return OKToast(
         backgroundColor: Colors.black54,
-        textPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+        textPadding:
+            const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
         radius: 20.0,
         position: ToastPosition.bottom,
-        child: app
-    );
+        child: _buildMaterialApp(ref));
   }
 
-  Widget _buildMaterialApp(ThemeProvider provider) {
+  Widget _buildMaterialApp(WidgetRef ref) {
+    var themeNotifier = ref.watch(themeProvider);
     return MaterialApp(
       title: 'saas_flutter_module',
       // showPerformanceOverlay: true, //显示性能标签
@@ -103,10 +91,10 @@ class MyApp extends StatelessWidget {
       // showSemanticsDebugger: true, // 显示语义视图
       // checkerboardOffscreenLayers: true, // 检查离屏渲染
 
-      theme: theme ?? provider.getTheme(),
-      darkTheme: provider.getTheme(isDarkMode: true),
-      themeMode: provider.getThemeMode(),
-      home: AMapPage(),
+      theme: themeNotifier.getTheme(),
+      darkTheme: themeNotifier.getTheme(isDarkMode: true),
+      themeMode: themeNotifier.getThemeMode(),
+      home: CheckInDetailPage(),
       onGenerateRoute: Routes.router.generator,
       navigatorKey: navigatorKey,
       builder: (BuildContext context, Widget? child) {

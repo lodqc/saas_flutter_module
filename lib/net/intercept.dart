@@ -21,7 +21,9 @@ class AuthInterceptor extends Interceptor {
     }
     if (!Device.isWeb) {
       // https://developer.github.com/v3/#user-agent-required
-      options.headers['User-Agent'] = 'Mozilla/5.0';
+      options.headers['User-Agent'] = 'ANDROID_1.2.0,11,OPPO_PDAM10';
+      options.headers['CityCode'] = '440305';
+      options.headers['Accept-Language'] = 'zh';
     }
     super.onRequest(options, handler);
   }

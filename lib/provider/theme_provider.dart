@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:saas_flutter_module/provider/web_page_transitions.dart';
 import 'package:saas_flutter_module/res/colors.dart';
 import 'package:saas_flutter_module/res/constant.dart';
@@ -11,8 +12,7 @@ extension ThemeModeExtension on ThemeMode {
   String get value => <String>['System', 'Light', 'Dark'][index];
 }
 
-class ThemeProvider extends ChangeNotifier {
-
+class ThemeNotifier extends ChangeNotifier {
   void syncTheme() {
     final String theme = SpUtil.getString(Constant.theme) ?? '';
     if (theme.isNotEmpty && theme != ThemeMode.system.value) {
@@ -71,9 +71,9 @@ class ThemeProvider extends ChangeNotifier {
         hintStyle: isDarkMode ? TextStyles.textHint14 : TextStyles.textDarkGray14,
       ),
       dividerTheme: DividerThemeData(
-        color: isDarkMode ? Colours.dark_line : Colours.line,
-        space: 0.6,
-        thickness: 0.6
+          color: isDarkMode ? Colours.dark_line : Colours.line,
+          space: 0.6,
+          thickness: 0.6
       ),
       cupertinoOverrideTheme: CupertinoThemeData(
         brightness: isDarkMode ? Brightness.dark : Brightness.light,
@@ -102,5 +102,8 @@ class ThemeProvider extends ChangeNotifier {
       ),
     );
   }
-
 }
+
+final themeProvider = ChangeNotifierProvider<ThemeNotifier>((ref) {
+  return ThemeNotifier();
+});
