@@ -137,13 +137,9 @@ class AdapterInterceptor extends Interceptor{
   static const String _kMsg = 'msg';
   static const String _kSlash = "'";
   static const String _kMessage = 'message';
-
-  static const String _kDefaultText = '无返回信息';
   static const String _kNotFound = '未找到查询信息';
+  static const String _kFailureFormat = '{"code":%d,"${Constant.msg}":"%s"}';
 
-  static const String _kFailureFormat = '{"code":%d,"message":"%s"}';
-  static const String _kSuccessFormat = '{"code":0,"data":%s,"message":""}';
-  
   @override
   void onResponse(Response<dynamic> response, ResponseInterceptorHandler handler) {
     final Response<dynamic> r = adapterData(response);
@@ -163,10 +159,7 @@ class AdapterInterceptor extends Interceptor{
     String content = response.data?.toString() ?? '';
     /// 成功时，直接格式化返回
     if (response.statusCode == ExceptionHandle.success || response.statusCode == ExceptionHandle.success_not_content) {
-      if (content.isEmpty) {
-        content = _kDefaultText;
-      }
-      result = sprintf(_kSuccessFormat, [content]);
+      result = content;
       response.statusCode = ExceptionHandle.success;
     } else {
       if (response.statusCode == ExceptionHandle.not_found) {

@@ -42,7 +42,7 @@ class DioUtils {
     final BaseOptions options = BaseOptions(
       connectTimeout: _connectTimeout,
       receiveTimeout: _receiveTimeout,
-      contentType: "application/json",
+      contentType: Headers.jsonContentType,
       sendTimeout: _sendTimeout,
       validateStatus: (_) {
         // 不使用http状态码判断状态，使用AdapterInterceptor来处理（适用于标准REST风格）
@@ -111,7 +111,7 @@ class DioUtils {
     return options;
   }
 
-  Future<dynamic> requestNetwork<T>(Method method, String url, {
+  Future<T?> requestNetwork<T>(Method method, String url, {
     NetSuccessCallback<T?>? onSuccess,
     NetErrorCallback? onError,
     Object? params,
@@ -124,12 +124,13 @@ class DioUtils {
       queryParameters: queryParameters,
       options: options,
       cancelToken: cancelToken,
-    ).then<void>((BaseEntity<T> result) {
-      if (result.code == 0) {
-        onSuccess?.call(result.data);
+    ).then<T?>((BaseEntity<T> result) {
+      if (result.code == 600) {
+        onSuccess?.call(result.result);
       } else {
-        _onError(result.code, result.message, onError);
+        _onError(result.code, result.msg, onError);
       }
+      return result.result;
     }, onError: (dynamic e) {
       _cancelLogPrint(e, url);
       final NetError error = ExceptionHandle.handleException(e);
@@ -155,10 +156,10 @@ class DioUtils {
         .listen((result) {
       if (result.code == 0) {
         if (onSuccess != null) {
-          onSuccess(result.data);
+          onSuccess(result.result);
         }
       } else {
-        _onError(result.code, result.message, onError);
+        _onError(result.code, result.msg, onError);
       }
     }, onError: (dynamic e) {
       _cancelLogPrint(e, url);

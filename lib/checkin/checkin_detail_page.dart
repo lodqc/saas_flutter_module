@@ -1,7 +1,9 @@
 import 'package:common_utils/common_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:saas_flutter_module/bean/login_entity.dart';
 import 'package:saas_flutter_module/checkin/checkin_provider.dart';
+import 'package:saas_flutter_module/net/dio_utils.dart';
 import 'package:saas_flutter_module/res/resources.dart';
 import 'package:saas_flutter_module/widgets/my_app_bar.dart';
 import 'package:saas_flutter_module/widgets/my_refresh_list.dart';
@@ -22,7 +24,6 @@ class _CheckInDetailPageState extends ConsumerState<CheckInDetailPage> {
   void initState() {
     super.initState();
     _onRefresh();
-    ref.read(myProvider);
   }
 
   Future<void> _onRefresh() async {
@@ -59,8 +60,8 @@ class _CheckInDetailPageState extends ConsumerState<CheckInDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    var value = ref.watch(myProvider);
-    LogUtil.e(value);
+    var login = ref.watch(loginStateProvider);
+    LogUtil.e(login?.token,tag: "fq");
     return Scaffold(
       body: NotificationListener(
         child: RefreshIndicator(

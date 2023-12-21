@@ -8,8 +8,8 @@ class Constant {
   static bool isDriverTest  = false;
   static bool isUnitTest  = false;
   
-  static const String data = 'data';
-  static const String message = 'message';
+  static const String result = 'result';
+  static const String msg = 'msg';
   static const String code = 'code';
   
   static const String keyGuide = 'keyGuide';
