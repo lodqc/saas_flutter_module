@@ -1,41 +1,73 @@
-import 'package:common_utils/common_utils.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:saas_flutter_module/bean/battery_alarm_bean_entity.dart';
 import 'package:saas_flutter_module/bean/login_body_bean.dart';
 import 'package:saas_flutter_module/bean/login_entity.dart';
 import 'package:saas_flutter_module/net/dio_utils.dart';
 
-final loginNetProvider = FutureProvider.autoDispose((ref)  async {
-  final cancelToken = CancelToken();
-  ref.onDispose(() => cancelToken.cancel());
-  final response = await DioUtils.instance.requestNetwork<LoginEntity>(
+final loginNetProvider = FutureProvider.autoDispose((ref) {
+  return DioUtils.instance.providerAutoRequest<LoginEntity>(
+    ref,
     Method.post,
     "cloud_manage/login",
     params: LoginBodyBean(
         platId: 1,
         userName: '18138819493@swap.com',
         pwd: 'e10adc3949ba59abbe56e057f20f883e'),
-    cancelToken: cancelToken,
   );
-  ref.keepAlive();
-  return response;
 });
 
-final loginStateProvider =
-    StateNotifierProvider.autoDispose<LoginNotifier, LoginEntity?>((ref) {
-  var notifier = LoginNotifier(null);
-  ref.watch(loginNetProvider).when(
-      data: (login) {
-        notifier.onSuccess(login);
+final batteryAlarmProvider =
+StateNotifierProvider<BatteryAlarmNotifier, List<BatteryAlarmBeanContent>>(
+        (ref) {
+      return BatteryAlarmNotifier();
+    });
+
+class BatteryAlarmNotifier
+    extends StateNotifier<List<BatteryAlarmBeanContent>> {
+  int _page = 1;
+  bool _isLoading = false;
+  num _maxPage = 1;
+
+  BatteryAlarmNotifier() : super([]);
+
+  fetch() async {
+    var data = await DioUtils.instance.requestNetwork<BatteryAlarmBeanEntity>(
+      Method.get,
+      "cloud_manage/batteryAlarm/list/app",
+      queryParameters: {
+        "batterySn": "B0602GF23708739",
+        "pageIndex": _page,
+        "pageSize": 15
       },
-      error: (err, stack) => {},
-      loading: () => {});
-  return notifier;
-});
+    );
+    if(_isLoading){
+      var list = data?.content??[];
+      state = [...state,...list];
+    }else{
+      state = data?.content??[];
+    }
+    _maxPage = (data?.totalCount ?? 0) / 15 + 1;
+  }
 
-class LoginNotifier extends StateNotifier<LoginEntity?> {
-  LoginNotifier(super.state);
-  void onSuccess(login) {
-    state = login;
+  Future<void> refresh() async {
+    _page = 1;
+    await fetch();
+  }
+
+  bool hasMore() {
+    return _page < _maxPage;
+  }
+
+  Future<void> loadMore() async {
+    if (_isLoading) {
+      return;
+    }
+    if (!hasMore()) {
+      return;
+    }
+    _isLoading = true;
+    await fetch();
+    _page++;
+    _isLoading = false;
   }
 }

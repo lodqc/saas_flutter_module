@@ -1,9 +1,6 @@
-import 'package:common_utils/common_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:saas_flutter_module/bean/login_entity.dart';
 import 'package:saas_flutter_module/checkin/checkin_provider.dart';
-import 'package:saas_flutter_module/net/dio_utils.dart';
 import 'package:saas_flutter_module/res/resources.dart';
 import 'package:saas_flutter_module/widgets/my_app_bar.dart';
 import 'package:saas_flutter_module/widgets/my_refresh_list.dart';
@@ -16,66 +13,28 @@ class CheckInDetailPage extends ConsumerStatefulWidget {
 }
 
 class _CheckInDetailPageState extends ConsumerState<CheckInDetailPage> {
-  int _page = 1;
-  List<String> _list = <String>[];
-  final int _maxPage = 3;
-
   @override
   void initState() {
     super.initState();
-    _onRefresh();
-  }
-
-  Future<void> _onRefresh() async {
-    await Future.delayed(const Duration(seconds: 2), () {
-      setState(() {
-        _page = 1;
-        _list = List.generate(30, (i) => 'newItem：$i');
-      });
-    });
-  }
-
-  bool _hasMore() {
-    return _page < _maxPage;
-  }
-
-  bool _isLoading = false;
-
-  Future<void> _loadMore() async {
-    if (_isLoading) {
-      return;
-    }
-    if (!_hasMore()) {
-      return;
-    }
-    _isLoading = true;
-    await Future.delayed(const Duration(seconds: 2), () {
-      setState(() {
-        _list.addAll(List.generate(30, (i) => 'newItem：$i'));
-        _page++;
-        _isLoading = false;
-      });
-    });
+    ref.read(batteryAlarmProvider.notifier).refresh();
   }
 
   @override
   Widget build(BuildContext context) {
-    var login = ref.watch(loginStateProvider);
-    LogUtil.e(login?.token,tag: "fq");
     return Scaffold(
       body: NotificationListener(
         child: RefreshIndicator(
-          onRefresh: _onRefresh,
+          onRefresh: () => ref.read(batteryAlarmProvider.notifier).refresh(),
           child: Container(
             child: CustomScrollView(
-              slivers: <Widget>[_buildSliverAppBar(), _buildSliverList()],
+              slivers: <Widget>[_buildSliverAppBar(), _buildSliverList(ref)],
             ),
             color: Colours.color_FFF7F7F7,
           ),
         ),
         onNotification: (ScrollNotification note) {
           if (note.metrics.pixels == note.metrics.maxScrollExtent) {
-            _loadMore();
+            ref.read(batteryAlarmProvider.notifier).loadMore();
           }
           return true;
         },
@@ -87,60 +46,63 @@ class _CheckInDetailPageState extends ConsumerState<CheckInDetailPage> {
     );
   }
 
-  Widget _buildSliverList() => SliverList(
-        delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
-          return index < _list.length
-              ? Container(
-                  height: 90,
-                  margin: EdgeInsets.only(top: 10, left: 10, right: 10),
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(4)),
-                  child: Stack(
-                    children: [
-                      Positioned(
-                        child: Text(
-                          "S0200BT22900002",
-                          style: TextStyles.color_FF222222_16M,
-                        ),
-                        top: 12,
-                        left: 16,
-                      ),
-                      Positioned(
-                        child: Text(
-                          "本月巡检次数：1",
-                          style: TextStyles.color_FF888888_14N,
-                        ),
-                        bottom: 16,
-                        left: 16,
-                      ),
-                      Positioned(
-                        child: Text(
-                          "巡检人：叶大钊",
-                          style: TextStyles.color_FF888888_14N,
-                        ),
-                        bottom: 16,
-                        left: 140,
-                      ),
-                      Positioned(
-                        child: Images.icItem0,
-                        top: 15,
-                        right: 90,
-                      ),
-                      Positioned(
-                        child: Text(
-                          "本月已巡检",
-                          style: TextStyles.text14N,
-                        ),
-                        top: 14,
-                        right: 16,
-                      ),
-                    ],
-                  ),
-                )
-              : MoreWidget(_list.length, _hasMore(), 10);
-        }, childCount: _list.length + 1),
-      );
+  Widget _buildSliverList(WidgetRef ref){
+    var list = ref.watch(batteryAlarmProvider);
+    return SliverList(
+      delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
+        return index < (list?.length??0)
+            ? Container(
+          height: 90,
+          margin: EdgeInsets.only(top: 10, left: 10, right: 10),
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(4)),
+          child: Stack(
+            children: [
+              Positioned(
+                child: Text(
+                  "S0200BT22900002",
+                  style: TextStyles.color_FF222222_16M,
+                ),
+                top: 12,
+                left: 16,
+              ),
+              Positioned(
+                child: Text(
+                  "本月巡检次数：1",
+                  style: TextStyles.color_FF888888_14N,
+                ),
+                bottom: 16,
+                left: 16,
+              ),
+              Positioned(
+                child: Text(
+                  "巡检人：叶大钊",
+                  style: TextStyles.color_FF888888_14N,
+                ),
+                bottom: 16,
+                left: 140,
+              ),
+              Positioned(
+                child: Images.icItem0,
+                top: 15,
+                right: 90,
+              ),
+              Positioned(
+                child: Text(
+                  "本月已巡检",
+                  style: TextStyles.text14N,
+                ),
+                top: 14,
+                right: 16,
+              ),
+            ],
+          ),
+        )
+            : MoreWidget((list?.length??0), ref.read(batteryAlarmProvider.notifier).hasMore());
+      }, childCount: (list?.length??0) + 1),
+    );
+  }
 
   Widget _buildSliverAppBar() {
     return SliverAppBar(

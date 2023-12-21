@@ -24,6 +24,7 @@ class AuthInterceptor extends Interceptor {
       options.headers['User-Agent'] = 'ANDROID_1.2.0,11,OPPO_PDAM10';
       options.headers['CityCode'] = '440305';
       options.headers['Accept-Language'] = 'zh';
+      options.headers['Authorization'] = SpUtil.getString(Constant.accessToken);
     }
     super.onRequest(options, handler);
   }

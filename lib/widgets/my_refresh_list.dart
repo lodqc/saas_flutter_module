@@ -58,7 +58,7 @@ class _DeerListViewState extends State<DeerListView> {
           if (widget.loadMore == null) {
             return widget.itemBuilder(context, index);
           } else {
-            return index < widget.itemCount ? widget.itemBuilder(context, index) : MoreWidget(widget.itemCount, widget.hasMore, widget.pageSize);
+            return index < widget.itemCount ? widget.itemBuilder(context, index) : MoreWidget(widget.itemCount, widget.hasMore);
           }
         },
       ),
@@ -96,7 +96,7 @@ class _DeerListViewState extends State<DeerListView> {
 
 class MoreWidget extends StatelessWidget {
   
-  const MoreWidget(this.itemCount, this.hasMore, this.pageSize, {super.key});
+  const MoreWidget(this.itemCount, this.hasMore, {super.key, this.pageSize = 15});
 
   final int itemCount;
   final bool hasMore;
