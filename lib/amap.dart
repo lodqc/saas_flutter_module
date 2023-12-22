@@ -2,6 +2,7 @@ import 'package:amap_flutter_base/amap_flutter_base.dart';
 import 'package:amap_flutter_map/amap_flutter_map.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:saas_flutter_module/plugins/SaasPlugin.dart';
 import 'package:saas_flutter_module/plugins/pigeon_out.dart';
 import 'package:saas_flutter_module/res/resources.dart';
 import 'package:saas_flutter_module/util/const_config.dart';
@@ -21,23 +22,26 @@ class _AMapPageState extends State<AMapPage> {
   @override
   void initState() {
     super.initState();
-    FlutterToNative().getBatteryMapBean().then((value) {
-      _bean = value;
-      map = AMapWidget(
-        privacyStatement: ConstConfig.amapPrivacyStatement,
-        apiKey: ConstConfig.amapApiKeys,
-        initialCameraPosition: CameraPosition(
-            target:
-                LatLng(_bean?.latitude ?? 0, _bean?.longitude.toDouble() ?? 0),
-            zoom: 15),
-        markers: {
-          Marker(
-              position: LatLng(_bean?.latitude ?? 0, _bean?.longitude ?? 0),
-              icon: BitmapDescriptor.fromIconPath(
-                  'assets/images/ic_battery0.png'))
-        },
-      );
+    var saasPlugin = SaasPlugin(batteryMapCallback: (data) {
+      setState(() {
+        _bean = data;
+        map = AMapWidget(
+          privacyStatement: ConstConfig.amapPrivacyStatement,
+          apiKey: ConstConfig.amapApiKeys,
+          initialCameraPosition: CameraPosition(
+              target: LatLng(
+                  _bean?.latitude ?? 0, _bean?.longitude.toDouble() ?? 0),
+              zoom: 15),
+          markers: {
+            Marker(
+                position: LatLng(_bean?.latitude ?? 0, _bean?.longitude ?? 0),
+                icon: BitmapDescriptor.fromIconPath(
+                    'assets/images/ic_battery0.png'))
+          },
+        );
+      });
     });
+    NativeToFlutter.setup(saasPlugin);
   }
 
   @override
@@ -96,7 +100,7 @@ class _AMapPageState extends State<AMapPage> {
                         style: TextStyles.color_FF888888_12N),
                     Padding(padding: EdgeInsets.only(top: 4)),
                     Text(
-                        '最后上报：${DateFormat("yyyy/MM/dd HH:mm:ss").format(DateTime.fromMillisecondsSinceEpoch(int.parse(_bean?.time ?? "")))}',
+                        '最后上报：${DateFormat("yyyy/MM/dd HH:mm:ss").format(DateTime.fromMillisecondsSinceEpoch(int.parse(_bean?.time ?? "0")))}',
                         style: TextStyles.color_FF888888_12N),
                   ],
                 ),

@@ -19,11 +19,13 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)makeWithAuthorization:(NSString *)authorization
     userAgent:(NSString *)userAgent
     cityCode:(NSString *)cityCode
-    acceptLanguage:(NSString *)acceptLanguage;
+    acceptLanguage:(NSString *)acceptLanguage
+    baseUrl:(NSString *)baseUrl;
 @property(nonatomic, copy) NSString * authorization;
 @property(nonatomic, copy) NSString * userAgent;
 @property(nonatomic, copy) NSString * cityCode;
 @property(nonatomic, copy) NSString * acceptLanguage;
+@property(nonatomic, copy) NSString * baseUrl;
 @end
 
 @interface FLTBatteryMapBean : NSObject
@@ -45,11 +47,17 @@ NSObject<FlutterMessageCodec> *FLTFlutterToNativeGetCodec(void);
 @protocol FLTFlutterToNative
 /// @return `nil` only when `error != nil`.
 - (nullable FLTNetHeaderBean *)getNetHeaderBeanWithError:(FlutterError *_Nullable *_Nonnull)error;
-/// @return `nil` only when `error != nil`.
-- (nullable FLTBatteryMapBean *)getBatteryMapBeanWithError:(FlutterError *_Nullable *_Nonnull)error;
 - (void)navigationWithError:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
 extern void SetUpFLTFlutterToNative(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FLTFlutterToNative> *_Nullable api);
+
+/// The codec used by FLTNativeToFlutter.
+NSObject<FlutterMessageCodec> *FLTNativeToFlutterGetCodec(void);
+
+@interface FLTNativeToFlutter : NSObject
+- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
+- (void)setBatteryMapBeanBean:(FLTBatteryMapBean *)bean completion:(void (^)(FlutterError *_Nullable))completion;
+@end
 
 NS_ASSUME_NONNULL_END

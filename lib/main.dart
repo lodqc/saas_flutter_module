@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:saas_flutter_module/amap.dart';
-import 'package:saas_flutter_module/check_list.dart';
 import 'package:saas_flutter_module/checkin/checkin_detail_page.dart';
 import 'package:saas_flutter_module/net/dio_utils.dart';
 import 'package:saas_flutter_module/net/intercept.dart';
+import 'package:saas_flutter_module/plugins/pigeon_out.dart';
 import 'package:saas_flutter_module/provider/theme_provider.dart';
 import 'package:saas_flutter_module/res/constant.dart';
 import 'package:saas_flutter_module/router/not_found_page.dart';
@@ -39,9 +39,6 @@ Future<void> main() async {
 @pragma('vm:entry-point')
 void aMapPage() => runApp(AMapPage());
 
-@pragma('vm:entry-point')
-void checkListPage() => runApp(CheckListPage(color: Colors.purple));
-
 class MyApp extends ConsumerWidget {
   MyApp({super.key}) {
     Log.init();
@@ -52,22 +49,30 @@ class MyApp extends ConsumerWidget {
   static GlobalKey<NavigatorState> navigatorKey = GlobalKey();
 
   void initDio() {
-    final List<Interceptor> interceptors = <Interceptor>[];
-    /// 统一添加身份验证请求头
-    interceptors.add(AuthInterceptor());
-    /// 刷新Token
-    interceptors.add(TokenInterceptor());
-    /// 打印Log(生产模式去除)
-    if (!Constant.inProduction) {
-      interceptors.add(LoggingInterceptor());
-    }
-    /// 适配数据(根据自己的数据结构，可自行选择添加)
-    interceptors.add(AdapterInterceptor());
-    // https://t-cloud-manage-api.ehuandian.net/cloud_manage/login
-    configDio(
-      baseUrl: 'https://t-cloud-manage-api.ehuandian.net/',
-      interceptors: interceptors,
-    );
+    FlutterToNative().getNetHeaderBean().then((data) {
+      final List<Interceptor> interceptors = <Interceptor>[];
+
+      /// 统一添加身份验证请求头
+      interceptors.add(AuthInterceptor(data));
+
+      /// 刷新Token
+      interceptors.add(TokenInterceptor());
+
+      /// 打印Log(生产模式去除)
+      if (!Constant.inProduction) {
+        interceptors.add(LoggingInterceptor());
+      }
+
+      /// 适配数据(根据自己的数据结构，可自行选择添加)
+      interceptors.add(AdapterInterceptor());
+      // https://t-cloud-manage-api.ehuandian.net/cloud_manage/login
+      configDio(
+        baseUrl: data.baseUrl,
+        interceptors: interceptors,
+      );
+    }, onError: (error) {
+      Log.e(error);
+    });
   }
 
   @override

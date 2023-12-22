@@ -6,9 +6,10 @@ class NetHeaderBean {
   final String userAgent;
   final String cityCode;
   final String acceptLanguage;
+  final String baseUrl;
 
   NetHeaderBean(
-      this.authorization, this.userAgent, this.cityCode, this.acceptLanguage);
+      this.authorization, this.userAgent, this.cityCode, this.acceptLanguage, this.baseUrl);
 }
 
 //地图坐标数据
@@ -25,21 +26,11 @@ class BatteryMapBean {
 @HostApi()
 abstract class FlutterToNative {
   NetHeaderBean getNetHeaderBean();
-
-  BatteryMapBean getBatteryMapBean();
-
   void navigation();
 }
 
-// /// Flutter数据
-// class FlutterBean {
-//   final int fId;
-//   final String fName;
-//   FlutterBean(this.fId, this.fName);
-// }
-//
-// // 原生调用Flutter Flutter去实现
-// @FlutterApi()
-// abstract class NativeToFlutter {
-//   FlutterBean getFlutterInfo(int id);
-// }
+// 原生调用Flutter Flutter去实现
+@FlutterApi()
+abstract class NativeToFlutter {
+  void setBatteryMapBean(BatteryMapBean bean);
+}

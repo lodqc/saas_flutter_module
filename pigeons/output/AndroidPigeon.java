@@ -62,6 +62,11 @@ public class AndroidPigeon {
     return errorList;
   }
 
+  @NonNull
+  protected static FlutterError createConnectionError(@NonNull String channelName) {
+    return new FlutterError("channel-error",  "Unable to establish connection on channel: " + channelName + ".", "");
+  }
+
   @Target(METHOD)
   @Retention(CLASS)
   @interface CanIgnoreReturnValue {}
@@ -120,6 +125,19 @@ public class AndroidPigeon {
       this.acceptLanguage = setterArg;
     }
 
+    private @NonNull String baseUrl;
+
+    public @NonNull String getBaseUrl() {
+      return baseUrl;
+    }
+
+    public void setBaseUrl(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"baseUrl\" is null.");
+      }
+      this.baseUrl = setterArg;
+    }
+
     /** Constructor is non-public to enforce null safety; use Builder. */
     NetHeaderBean() {}
 
@@ -157,23 +175,33 @@ public class AndroidPigeon {
         return this;
       }
 
+      private @Nullable String baseUrl;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setBaseUrl(@NonNull String setterArg) {
+        this.baseUrl = setterArg;
+        return this;
+      }
+
       public @NonNull NetHeaderBean build() {
         NetHeaderBean pigeonReturn = new NetHeaderBean();
         pigeonReturn.setAuthorization(authorization);
         pigeonReturn.setUserAgent(userAgent);
         pigeonReturn.setCityCode(cityCode);
         pigeonReturn.setAcceptLanguage(acceptLanguage);
+        pigeonReturn.setBaseUrl(baseUrl);
         return pigeonReturn;
       }
     }
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<Object>(4);
+      ArrayList<Object> toListResult = new ArrayList<Object>(5);
       toListResult.add(authorization);
       toListResult.add(userAgent);
       toListResult.add(cityCode);
       toListResult.add(acceptLanguage);
+      toListResult.add(baseUrl);
       return toListResult;
     }
 
@@ -187,6 +215,8 @@ public class AndroidPigeon {
       pigeonResult.setCityCode((String) cityCode);
       Object acceptLanguage = list.get(3);
       pigeonResult.setAcceptLanguage((String) acceptLanguage);
+      Object baseUrl = list.get(4);
+      pigeonResult.setBaseUrl((String) baseUrl);
       return pigeonResult;
     }
   }
@@ -316,6 +346,23 @@ public class AndroidPigeon {
     }
   }
 
+  /** Asynchronous error handling return type for non-nullable API method returns. */
+  public interface Result<T> {
+    /** Success case callback method for handling returns. */
+    void success(@NonNull T result);
+
+    /** Failure case callback method for handling errors. */
+    void error(@NonNull Throwable error);
+  }
+  /** Asynchronous error handling return type for nullable API method returns. */
+  public interface NullableResult<T> {
+    /** Success case callback method for handling returns. */
+    void success(@Nullable T result);
+
+    /** Failure case callback method for handling errors. */
+    void error(@NonNull Throwable error);
+  }
+
   private static class FlutterToNativeCodec extends StandardMessageCodec {
     public static final FlutterToNativeCodec INSTANCE = new FlutterToNativeCodec();
 
@@ -325,8 +372,6 @@ public class AndroidPigeon {
     protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
       switch (type) {
         case (byte) 128:
-          return BatteryMapBean.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 129:
           return NetHeaderBean.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
@@ -335,11 +380,8 @@ public class AndroidPigeon {
 
     @Override
     protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
-      if (value instanceof BatteryMapBean) {
+      if (value instanceof NetHeaderBean) {
         stream.write(128);
-        writeValue(stream, ((BatteryMapBean) value).toList());
-      } else if (value instanceof NetHeaderBean) {
-        stream.write(129);
         writeValue(stream, ((NetHeaderBean) value).toList());
       } else {
         super.writeValue(stream, value);
@@ -352,9 +394,6 @@ public class AndroidPigeon {
 
     @NonNull 
     NetHeaderBean getNetHeaderBean();
-
-    @NonNull 
-    BatteryMapBean getBatteryMapBean();
 
     void navigation();
 
@@ -389,28 +428,6 @@ public class AndroidPigeon {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.saas_flutter_module.FlutterToNative.getBatteryMapBean", getCodec());
-        if (api != null) {
-          channel.setMessageHandler(
-              (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
-                try {
-                  BatteryMapBean output = api.getBatteryMapBean();
-                  wrapped.add(0, output);
-                }
- catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
-                }
-                reply.reply(wrapped);
-              });
-        } else {
-          channel.setMessageHandler(null);
-        }
-      }
-      {
-        BasicMessageChannel<Object> channel =
-            new BasicMessageChannel<>(
                 binaryMessenger, "dev.flutter.pigeon.saas_flutter_module.FlutterToNative.navigation", getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -430,6 +447,67 @@ public class AndroidPigeon {
           channel.setMessageHandler(null);
         }
       }
+    }
+  }
+
+  private static class NativeToFlutterCodec extends StandardMessageCodec {
+    public static final NativeToFlutterCodec INSTANCE = new NativeToFlutterCodec();
+
+    private NativeToFlutterCodec() {}
+
+    @Override
+    protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
+      switch (type) {
+        case (byte) 128:
+          return BatteryMapBean.fromList((ArrayList<Object>) readValue(buffer));
+        default:
+          return super.readValueOfType(type, buffer);
+      }
+    }
+
+    @Override
+    protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
+      if (value instanceof BatteryMapBean) {
+        stream.write(128);
+        writeValue(stream, ((BatteryMapBean) value).toList());
+      } else {
+        super.writeValue(stream, value);
+      }
+    }
+  }
+
+  /** Generated class from Pigeon that represents Flutter messages that can be called from Java. */
+  public static class NativeToFlutter {
+    private final @NonNull BinaryMessenger binaryMessenger;
+
+    public NativeToFlutter(@NonNull BinaryMessenger argBinaryMessenger) {
+      this.binaryMessenger = argBinaryMessenger;
+    }
+
+    /** Public interface for sending reply. */ 
+    /** The codec used by NativeToFlutter. */
+    static @NonNull MessageCodec<Object> getCodec() {
+      return NativeToFlutterCodec.INSTANCE;
+    }
+    public void setBatteryMapBean(@NonNull BatteryMapBean beanArg, @NonNull Result<Void> result) {
+      final String channelName = "dev.flutter.pigeon.saas_flutter_module.NativeToFlutter.setBatteryMapBean";
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger, channelName, getCodec());
+      channel.send(
+          new ArrayList<Object>(Collections.singletonList(beanArg)),
+          channelReply -> {
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(new FlutterError((String) listReply.get(0), (String) listReply.get(1), (String) listReply.get(2)));
+              } else {
+                result.success(null);
+              }
+            }  else {
+              result.error(createConnectionError(channelName));
+            } 
+          });
     }
   }
 }

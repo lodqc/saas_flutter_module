@@ -22,6 +22,10 @@ static NSArray *wrapResult(id result, FlutterError *error) {
   return @[ result ?: [NSNull null] ];
 }
 
+static FlutterError *createConnectionError(NSString *channelName) {
+  return [FlutterError errorWithCode:@"channel-error" message:[NSString stringWithFormat:@"%@/%@/%@", @"Unable to establish connection on channel: '", channelName, @"'."] details:@""];
+}
+
 static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   id result = array[key];
   return (result == [NSNull null]) ? nil : result;
@@ -43,12 +47,14 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 + (instancetype)makeWithAuthorization:(NSString *)authorization
     userAgent:(NSString *)userAgent
     cityCode:(NSString *)cityCode
-    acceptLanguage:(NSString *)acceptLanguage {
+    acceptLanguage:(NSString *)acceptLanguage
+    baseUrl:(NSString *)baseUrl {
   FLTNetHeaderBean* pigeonResult = [[FLTNetHeaderBean alloc] init];
   pigeonResult.authorization = authorization;
   pigeonResult.userAgent = userAgent;
   pigeonResult.cityCode = cityCode;
   pigeonResult.acceptLanguage = acceptLanguage;
+  pigeonResult.baseUrl = baseUrl;
   return pigeonResult;
 }
 + (FLTNetHeaderBean *)fromList:(NSArray *)list {
@@ -57,6 +63,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   pigeonResult.userAgent = GetNullableObjectAtIndex(list, 1);
   pigeonResult.cityCode = GetNullableObjectAtIndex(list, 2);
   pigeonResult.acceptLanguage = GetNullableObjectAtIndex(list, 3);
+  pigeonResult.baseUrl = GetNullableObjectAtIndex(list, 4);
   return pigeonResult;
 }
 + (nullable FLTNetHeaderBean *)nullableFromList:(NSArray *)list {
@@ -68,6 +75,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
     self.userAgent ?: [NSNull null],
     self.cityCode ?: [NSNull null],
     self.acceptLanguage ?: [NSNull null],
+    self.baseUrl ?: [NSNull null],
   ];
 }
 @end
@@ -111,8 +119,6 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
     case 128: 
-      return [FLTBatteryMapBean fromList:[self readValue]];
-    case 129: 
       return [FLTNetHeaderBean fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
@@ -124,11 +130,8 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 @end
 @implementation FLTFlutterToNativeCodecWriter
 - (void)writeValue:(id)value {
-  if ([value isKindOfClass:[FLTBatteryMapBean class]]) {
+  if ([value isKindOfClass:[FLTNetHeaderBean class]]) {
     [self writeByte:128];
-    [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTNetHeaderBean class]]) {
-    [self writeByte:129];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];
@@ -178,23 +181,6 @@ void SetUpFLTFlutterToNative(id<FlutterBinaryMessenger> binaryMessenger, NSObjec
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.saas_flutter_module.FlutterToNative.getBatteryMapBean"
-        binaryMessenger:binaryMessenger
-        codec:FLTFlutterToNativeGetCodec()];
-    if (api) {
-      NSCAssert([api respondsToSelector:@selector(getBatteryMapBeanWithError:)], @"FLTFlutterToNative api (%@) doesn't respond to @selector(getBatteryMapBeanWithError:)", api);
-      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        FlutterError *error;
-        FLTBatteryMapBean *output = [api getBatteryMapBeanWithError:&error];
-        callback(wrapResult(output, error));
-      }];
-    } else {
-      [channel setMessageHandler:nil];
-    }
-  }
-  {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
         initWithName:@"dev.flutter.pigeon.saas_flutter_module.FlutterToNative.navigation"
         binaryMessenger:binaryMessenger
         codec:FLTFlutterToNativeGetCodec()];
@@ -210,3 +196,84 @@ void SetUpFLTFlutterToNative(id<FlutterBinaryMessenger> binaryMessenger, NSObjec
     }
   }
 }
+@interface FLTNativeToFlutterCodecReader : FlutterStandardReader
+@end
+@implementation FLTNativeToFlutterCodecReader
+- (nullable id)readValueOfType:(UInt8)type {
+  switch (type) {
+    case 128: 
+      return [FLTBatteryMapBean fromList:[self readValue]];
+    default:
+      return [super readValueOfType:type];
+  }
+}
+@end
+
+@interface FLTNativeToFlutterCodecWriter : FlutterStandardWriter
+@end
+@implementation FLTNativeToFlutterCodecWriter
+- (void)writeValue:(id)value {
+  if ([value isKindOfClass:[FLTBatteryMapBean class]]) {
+    [self writeByte:128];
+    [self writeValue:[value toList]];
+  } else {
+    [super writeValue:value];
+  }
+}
+@end
+
+@interface FLTNativeToFlutterCodecReaderWriter : FlutterStandardReaderWriter
+@end
+@implementation FLTNativeToFlutterCodecReaderWriter
+- (FlutterStandardWriter *)writerWithData:(NSMutableData *)data {
+  return [[FLTNativeToFlutterCodecWriter alloc] initWithData:data];
+}
+- (FlutterStandardReader *)readerWithData:(NSData *)data {
+  return [[FLTNativeToFlutterCodecReader alloc] initWithData:data];
+}
+@end
+
+NSObject<FlutterMessageCodec> *FLTNativeToFlutterGetCodec(void) {
+  static FlutterStandardMessageCodec *sSharedObject = nil;
+  static dispatch_once_t sPred = 0;
+  dispatch_once(&sPred, ^{
+    FLTNativeToFlutterCodecReaderWriter *readerWriter = [[FLTNativeToFlutterCodecReaderWriter alloc] init];
+    sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
+  });
+  return sSharedObject;
+}
+
+@interface FLTNativeToFlutter ()
+@property(nonatomic, strong) NSObject<FlutterBinaryMessenger> *binaryMessenger;
+@end
+
+@implementation FLTNativeToFlutter
+
+- (instancetype)initWithBinaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger {
+  self = [super init];
+  if (self) {
+    _binaryMessenger = binaryMessenger;
+  }
+  return self;
+}
+- (void)setBatteryMapBeanBean:(FLTBatteryMapBean *)arg_bean completion:(void (^)(FlutterError *_Nullable))completion {
+  NSString *channelName = @"dev.flutter.pigeon.saas_flutter_module.NativeToFlutter.setBatteryMapBean";
+  FlutterBasicMessageChannel *channel =
+    [FlutterBasicMessageChannel
+      messageChannelWithName:channelName
+      binaryMessenger:self.binaryMessenger
+      codec:FLTNativeToFlutterGetCodec()];
+  [channel sendMessage:@[arg_bean ?: [NSNull null]] reply:^(NSArray<id> *reply) {
+    if (reply != nil) {
+      if (reply.count > 1) {
+        completion([FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);
+      } else {
+        completion(nil);
+      }
+    } else {
+      completion(createConnectionError(channelName));
+    } 
+  }];
+}
+@end
+
