@@ -52,6 +52,8 @@ dependencies:
   amap_flutter_map: ^3.0.0
   # 状态管理
   flutter_riverpod: ^2.4.9
+  # 原生数据共享
+  pigeon: ^15.0.2
 
 # https://github.com/simplezhli/flutter_deer/issues/187
 dependency_overrides:

@@ -15,12 +15,7 @@ import 'error_handle.dart';
 class AuthInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    final String accessToken = SpUtil.getString(Constant.accessToken).nullSafe;
-    if (accessToken.isNotEmpty) {
-      options.headers['Authorization'] = 'token $accessToken';
-    }
     if (!Device.isWeb) {
-      // https://developer.github.com/v3/#user-agent-required
       options.headers['User-Agent'] = 'ANDROID_1.2.0,11,OPPO_PDAM10';
       options.headers['CityCode'] = '440305';
       options.headers['Accept-Language'] = 'zh';
