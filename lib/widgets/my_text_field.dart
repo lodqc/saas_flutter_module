@@ -2,30 +2,27 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:saas_flutter_module/res/colors.dart';
-import 'package:saas_flutter_module/res/dimens.dart';
-import 'package:saas_flutter_module/res/gaps.dart';
+import 'package:saas_flutter_module/res/resources.dart';
 import 'package:saas_flutter_module/util/device_utils.dart';
 import 'package:saas_flutter_module/widgets/load_image.dart';
 import 'package:saas_flutter_module/widgets/my_button.dart';
 
-
 /// 登录模块的输入框封装
 class MyTextField extends StatefulWidget {
-
-  const MyTextField({
-    super.key,
-    required this.controller,
-    this.maxLength = 16,
-    this.autoFocus = false,
-    this.keyboardType = TextInputType.text,
-    this.hintText = '',
-    this.focusNode,
-    this.isInputPwd = false,
-    this.isShowDelete = false,
-    this.getVCode,
-    this.keyName
-  });
+  const MyTextField(
+      {super.key,
+      required this.controller,
+      this.maxLength = 16,
+      this.autoFocus = false,
+      this.keyboardType = TextInputType.text,
+      this.hintText = '',
+      this.focusNode,
+      this.isInputPwd = false,
+      this.isShowDelete = false,
+      this.getVCode,
+      this.keyName,
+      this.style,
+      this.hintStyle});
 
   final TextEditingController controller;
   final int maxLength;
@@ -36,8 +33,11 @@ class MyTextField extends StatefulWidget {
   final bool isInputPwd;
   final bool isShowDelete;
   final Future<bool> Function()? getVCode;
+
   /// 用于集成测试寻找widget
   final String? keyName;
+  final style;
+  final hintStyle;
 
   @override
   _MyTextFieldState createState() => _MyTextFieldState();
@@ -47,8 +47,10 @@ class _MyTextFieldState extends State<MyTextField> {
   bool _isShowPwd = false;
   bool _isShowDelete = false;
   bool _clickable = true;
+
   /// 倒计时秒数
   final int _second = 30;
+
   /// 当前秒数
   late int _currentSecond;
   StreamSubscription<dynamic>? _subscription;
@@ -56,18 +58,20 @@ class _MyTextFieldState extends State<MyTextField> {
   @override
   void initState() {
     /// 获取初始化值
-    _isShowDelete = widget.controller.text.isNotEmpty&&widget.isShowDelete;
-    /// 监听输入改变  
+    _isShowDelete = widget.controller.text.isNotEmpty && widget.isShowDelete;
+
+    /// 监听输入改变
     widget.controller.addListener(isEmpty);
     super.initState();
   }
 
   void isEmpty() {
     final bool isNotEmpty = widget.controller.text.isNotEmpty;
+
     /// 状态不一样在刷新，避免重复不必要的setState
     if (isNotEmpty != _isShowDelete) {
       setState(() {
-        _isShowDelete = isNotEmpty&&widget.isShowDelete;
+        _isShowDelete = isNotEmpty && widget.isShowDelete;
       });
     }
   }
@@ -86,7 +90,9 @@ class _MyTextFieldState extends State<MyTextField> {
         _currentSecond = _second;
         _clickable = false;
       });
-      _subscription = Stream.periodic(const Duration(seconds: 1), (int i) => i).take(_second).listen((int i) {
+      _subscription = Stream.periodic(const Duration(seconds: 1), (int i) => i)
+          .take(_second)
+          .listen((int i) {
         setState(() {
           _currentSecond = _second - i - 1;
           _clickable = _currentSecond < 1;
@@ -98,7 +104,6 @@ class _MyTextFieldState extends State<MyTextField> {
   @override
   Widget build(BuildContext context) {
     final ThemeData themeData = Theme.of(context);
-    final bool isDark = themeData.brightness == Brightness.dark;
 
     Widget textField = TextField(
       focusNode: widget.focusNode,
@@ -108,12 +113,16 @@ class _MyTextFieldState extends State<MyTextField> {
       controller: widget.controller,
       textInputAction: TextInputAction.done,
       keyboardType: widget.keyboardType,
+      style: widget.style,
       // 数字、手机号限制格式为0到9， 密码限制不包含汉字
-      inputFormatters: (widget.keyboardType == TextInputType.number || widget.keyboardType == TextInputType.phone) ?
-      [FilteringTextInputFormatter.allow(RegExp('[0-9]'))] : [FilteringTextInputFormatter.deny(RegExp('[\u4e00-\u9fa5]'))],
+      inputFormatters: (widget.keyboardType == TextInputType.number ||
+              widget.keyboardType == TextInputType.phone)
+          ? [FilteringTextInputFormatter.allow(RegExp('[0-9]'))]
+          : [FilteringTextInputFormatter.deny(RegExp('[\u4e00-\u9fa5]'))],
       decoration: InputDecoration(
         contentPadding: const EdgeInsets.symmetric(vertical: 16.0),
         hintText: widget.hintText,
+        hintStyle: widget.hintStyle,
         counterText: '',
         focusedBorder: UnderlineInputBorder(
           borderSide: BorderSide(
@@ -123,7 +132,7 @@ class _MyTextFieldState extends State<MyTextField> {
         ),
         enabledBorder: UnderlineInputBorder(
           borderSide: BorderSide(
-            color: Theme.of(context).dividerTheme.color!,
+            color: Colors.transparent,
             width: 0.8,
           ),
         ),
@@ -134,7 +143,8 @@ class _MyTextFieldState extends State<MyTextField> {
     /// 怀疑是安全键盘与三方输入法之间的切换冲突问题。
     if (Device.isAndroid) {
       textField = Listener(
-        onPointerDown: (e) => FocusScope.of(context).requestFocus(widget.focusNode),
+        onPointerDown: (e) =>
+            FocusScope.of(context).requestFocus(widget.focusNode),
         child: textField,
       );
     }
@@ -146,7 +156,8 @@ class _MyTextFieldState extends State<MyTextField> {
         label: '清空',
         hint: '清空输入框',
         child: GestureDetector(
-          child: LoadAssetImage('qyg_shop_icon_delete',
+          child: LoadAssetImage(
+            'qyg_shop_icon_delete',
             key: Key('${widget.keyName}_delete'),
             width: 18.0,
             height: 40.0,

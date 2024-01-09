@@ -48,6 +48,10 @@ class TextStyles {
       fontSize: Dimens.font_sp14,
       color: Colours.color_FFC2C2C2
   );
+  static const TextStyle color_FFC2C2C2_24N = TextStyle(
+      fontSize: Dimens.font_sp24,
+      color: Colours.color_FFC2C2C2
+  );
   static const TextStyle color_FF222222_18M = TextStyle(
       fontSize: Dimens.font_sp18,
       color: Colours.color_FF222222,fontWeight: FontWeight.w500
@@ -60,6 +64,10 @@ class TextStyles {
       fontSize: Dimens.font_sp28,
       color: Colours.color_FF222222,fontWeight: FontWeight.w500
   );
+  static const TextStyle color_FF222222_24M = TextStyle(
+      fontSize: Dimens.font_sp24,
+      color: Colours.color_FF222222,fontWeight: FontWeight.w500
+  );
   static const TextStyle color_FF222222_16M = TextStyle(
       fontSize: Dimens.font_sp16,
       color: Colours.color_FF222222,fontWeight: FontWeight.w500
@@ -67,6 +75,11 @@ class TextStyles {
   static const TextStyle color_FF222222_14N = TextStyle(
       fontSize: Dimens.font_sp14,
       color: Colours.color_FF222222
+  );
+
+  static const TextStyle color_FF222222_14M = TextStyle(
+      fontSize: Dimens.font_sp14,
+      color: Colours.color_FF222222,fontWeight: FontWeight.w500
   );
   static const TextStyle color_FF484848_14N = TextStyle(
       fontSize: Dimens.font_sp14,
@@ -76,6 +89,10 @@ class TextStyles {
       fontSize: Dimens.font_sp16,
       color: Colours.color_FFFF6B00
   );
+  static const TextStyle color_FFFF6B00_14N = TextStyle(
+      fontSize: Dimens.font_sp14,
+      color: Colours.color_FFFF6B00
+  );
   static const TextStyle text16N = TextStyle(
       fontSize: Dimens.font_sp16,
       color: Colours.color_FF333333
@@ -83,6 +100,10 @@ class TextStyles {
   static const TextStyle color_FFFFFFFF_14N = TextStyle(
       fontSize: Dimens.font_sp14,
       color: Colours.color_FFFFFFFF,height: 1.2
+  );
+  static const TextStyle color_FFFFFFFF_14M = TextStyle(
+      fontSize: Dimens.font_sp14,
+      color: Colours.color_FFFFFFFF,height: 1.2,fontWeight: FontWeight.w500
   );
   static const TextStyle color_FF333333_14N = TextStyle(
       fontSize: Dimens.font_sp14,

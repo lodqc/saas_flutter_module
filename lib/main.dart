@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:saas_flutter_module/amap.dart';
-import 'package:saas_flutter_module/checkin/checkin_detail_page.dart';
 import 'package:saas_flutter_module/net/dio_utils.dart';
 import 'package:saas_flutter_module/net/intercept.dart';
 import 'package:saas_flutter_module/plugins/pigeon_out.dart';
@@ -14,6 +13,7 @@ import 'package:saas_flutter_module/router/not_found_page.dart';
 import 'package:saas_flutter_module/router/routers.dart';
 import 'package:saas_flutter_module/util/handle_error_utils.dart';
 import 'package:saas_flutter_module/util/log_utils.dart';
+import 'package:saas_flutter_module/withdraw/award_withdrawal_page.dart';
 import 'package:sp_util/sp_util.dart';
 import 'package:url_strategy/url_strategy.dart';
 
@@ -99,7 +99,7 @@ class MyApp extends ConsumerWidget {
       theme: themeNotifier.getTheme(),
       darkTheme: themeNotifier.getTheme(isDarkMode: true),
       themeMode: themeNotifier.getThemeMode(),
-      home: CheckInDetailPage(),
+      home: AwardWithdrawalPage(),
       onGenerateRoute: Routes.router.generator,
       navigatorKey: navigatorKey,
       builder: (BuildContext context, Widget? child) {

@@ -23,6 +23,11 @@ class Images {
     height: 20,
     width: 20,
   );
+  static const Widget imgSuccess = LoadAssetImage(
+    'ic_success',
+    height: 72,
+    width: 72,
+  );
   static const Widget icItem0 = LoadAssetImage(
     'ic_item_0',
     height: 20,

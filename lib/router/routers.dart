@@ -4,6 +4,7 @@ import 'package:saas_flutter_module/cabinet/cabinet_mount_page.dart';
 import 'package:saas_flutter_module/checkin/check_in_router.dart';
 import 'package:saas_flutter_module/router/i_router.dart';
 import 'package:saas_flutter_module/router/not_found_page.dart';
+import 'package:saas_flutter_module/withdraw/award_withdrawal_router.dart';
 
 class Routes {
 
@@ -34,7 +35,8 @@ class Routes {
     _listRouter.clear();
     /// 各自路由由各自模块管理，统一在此添加初始化
     _listRouter.add(CheckInRouter());
-  
+    _listRouter.add(AwardWithdrawalRouter());
+
     /// 初始化路由
     void initRouter(IRouterProvider routerProvider) {
       routerProvider.initRouter(router);
