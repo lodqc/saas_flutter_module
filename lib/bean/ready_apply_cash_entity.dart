@@ -10,7 +10,7 @@ class ReadyApplyCashEntity {
 	String? accountName = '';
 	int? accountType = 0;
 	double? canCashAmount;
-	double? amount;
+	int? amount;
 	double? handlingFee = 0;
 	double? amountReceived = 0;
 	String? bank = '';

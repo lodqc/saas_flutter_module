@@ -1,5 +1,7 @@
 import 'package:saas_flutter_module/generated/json/base/json_convert_content.dart';
 import 'package:saas_flutter_module/bean/ready_apply_cash_entity.dart';
+import 'dart:ffi';
+
 
 ReadyApplyCashEntity $ReadyApplyCashEntityFromJson(Map<String, dynamic> json) {
   final ReadyApplyCashEntity readyApplyCashEntity = ReadyApplyCashEntity();
@@ -11,9 +13,23 @@ ReadyApplyCashEntity $ReadyApplyCashEntityFromJson(Map<String, dynamic> json) {
   if (accountType != null) {
     readyApplyCashEntity.accountType = accountType;
   }
-  final double? amount = jsonConvert.convert<double>(json['amount']);
+  final double? canCashAmount = jsonConvert.convert<double>(
+      json['canCashAmount']);
+  if (canCashAmount != null) {
+    readyApplyCashEntity.canCashAmount = canCashAmount;
+  }
+  final int? amount = jsonConvert.convert<int>(json['amount']);
   if (amount != null) {
     readyApplyCashEntity.amount = amount;
+  }
+  final double? handlingFee = jsonConvert.convert<double>(json['handlingFee']);
+  if (handlingFee != null) {
+    readyApplyCashEntity.handlingFee = handlingFee;
+  }
+  final double? amountReceived = jsonConvert.convert<double>(
+      json['amountReceived']);
+  if (amountReceived != null) {
+    readyApplyCashEntity.amountReceived = amountReceived;
   }
   final String? bank = jsonConvert.convert<String>(json['bank']);
   if (bank != null) {
@@ -44,6 +60,14 @@ ReadyApplyCashEntity $ReadyApplyCashEntityFromJson(Map<String, dynamic> json) {
   if (verifyCode != null) {
     readyApplyCashEntity.verifyCode = verifyCode;
   }
+  final int? verifyNum = jsonConvert.convert<int>(json['verifyNum']);
+  if (verifyNum != null) {
+    readyApplyCashEntity.verifyNum = verifyNum;
+  }
+  final bool? canSubmit = jsonConvert.convert<bool>(json['canSubmit']);
+  if (canSubmit != null) {
+    readyApplyCashEntity.canSubmit = canSubmit;
+  }
   return readyApplyCashEntity;
 }
 
@@ -51,7 +75,10 @@ Map<String, dynamic> $ReadyApplyCashEntityToJson(ReadyApplyCashEntity entity) {
   final Map<String, dynamic> data = <String, dynamic>{};
   data['accountName'] = entity.accountName;
   data['accountType'] = entity.accountType;
+  data['canCashAmount'] = entity.canCashAmount;
   data['amount'] = entity.amount;
+  data['handlingFee'] = entity.handlingFee;
+  data['amountReceived'] = entity.amountReceived;
   data['bank'] = entity.bank;
   data['bankChild'] = entity.bankChild;
   data['bankNum'] = entity.bankNum;
@@ -59,6 +86,8 @@ Map<String, dynamic> $ReadyApplyCashEntityToJson(ReadyApplyCashEntity entity) {
   data['phone'] = entity.phone;
   data['taxRate'] = entity.taxRate;
   data['verifyCode'] = entity.verifyCode;
+  data['verifyNum'] = entity.verifyNum;
+  data['canSubmit'] = entity.canSubmit;
   return data;
 }
 
@@ -66,12 +95,12 @@ extension ReadyApplyCashEntityExtension on ReadyApplyCashEntity {
   ReadyApplyCashEntity copyWith({
     String? accountName,
     int? accountType,
-    double? amount,
-    double? amountReceived,
+    double? canCashAmount,
+    int? amount,
     double? handlingFee,
+    double? amountReceived,
     String? bank,
     String? bankChild,
-    double? canCashAmount,
     String? bankNum,
     String? certificatesNum,
     String? phone,
@@ -82,10 +111,11 @@ extension ReadyApplyCashEntityExtension on ReadyApplyCashEntity {
   }) {
     return ReadyApplyCashEntity()
       ..accountName = accountName ?? this.accountName
-      ..amountReceived = amountReceived ?? this.amountReceived
-      ..handlingFee = handlingFee ?? this.handlingFee
       ..accountType = accountType ?? this.accountType
+      ..canCashAmount = canCashAmount ?? this.canCashAmount
       ..amount = amount ?? this.amount
+      ..handlingFee = handlingFee ?? this.handlingFee
+      ..amountReceived = amountReceived ?? this.amountReceived
       ..bank = bank ?? this.bank
       ..bankChild = bankChild ?? this.bankChild
       ..bankNum = bankNum ?? this.bankNum
@@ -93,8 +123,7 @@ extension ReadyApplyCashEntityExtension on ReadyApplyCashEntity {
       ..phone = phone ?? this.phone
       ..taxRate = taxRate ?? this.taxRate
       ..verifyCode = verifyCode ?? this.verifyCode
-      ..canCashAmount = canCashAmount??this.canCashAmount
-      ..canSubmit = canSubmit??this.canSubmit
-      ..verifyNum = verifyNum ?? this.verifyNum;
+      ..verifyNum = verifyNum ?? this.verifyNum
+      ..canSubmit = canSubmit ?? this.canSubmit;
   }
 }

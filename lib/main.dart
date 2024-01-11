@@ -17,7 +17,17 @@ import 'package:saas_flutter_module/withdraw/award_withdrawal_page.dart';
 import 'package:sp_util/sp_util.dart';
 import 'package:url_strategy/url_strategy.dart';
 
+@pragma('vm:entry-point')
+void aMapPage() => runApp(AMapPage());
+
+@pragma('vm:entry-point')
+void withdrawPage() => initApp(AwardWithdrawalPage());
+
 Future<void> main() async {
+  initApp(AwardWithdrawalPage());
+}
+
+initApp(Widget initPage) {
   /// 异常处理
   handleError(() async {
     /// 确保初始化完成
@@ -29,23 +39,24 @@ Future<void> main() async {
 
     /// sp初始化
     await SpUtil.getInstance();
-    runApp(ProviderScope(child: MyApp()));
+    runApp(ProviderScope(child: MyApp(initPage)));
 
     ///屏幕刷新率和显示率不一致时的优化，必须挪动到 runApp 之后
     GestureBinding.instance.resamplingEnabled = true;
   });
 }
 
-@pragma('vm:entry-point')
-void aMapPage() => runApp(AMapPage());
-
 class MyApp extends ConsumerWidget {
-  MyApp({super.key}) {
+  Widget initPage;
+
+  MyApp(this.initPage, {super.key}) {
     Log.init();
     initDioFormNative();
     Routes.initRoutes();
   }
+
   static GlobalKey<NavigatorState> navigatorKey = GlobalKey();
+
   void initDioFormNative() {
     // FlutterToNative().getNetHeaderBean().then((data) {
     //   initDio(data);
@@ -54,7 +65,7 @@ class MyApp extends ConsumerWidget {
     // });
     initDio(NetHeaderBean(
         authorization:
-        "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjdXJyZW50VGltZSI6MTcwNDkzODU5NTIyNSwicGxhdElkIjoiMSIsInBob25lIjoiMTcxOTg2MzMxNjkiLCJsZXZlbCI6IjMiLCJpc3MiOiJhdXRoMCIsInRlbmFudElkIjoiNjRGODQ5RjI1MzQzQUIzRTBBODhEQjhCIiwibUlkIjoiNjA5MWUzZWNlYzQ5NGUxOTlmNTg3OWRkNTRkMGQ5NDUiLCJ1c2VyVHlwZSI6IjEiLCJ1c2VyTmFtZSI6IjE3MTk4NjMzMTY5IiwiZXhwIjoxNzA0OTgxNzk1LCJzdXBlckFkbWluIjoiMCJ9.FZQILVmLwuhGcwm1S_owc2_0heIwl3NwmqsvRp_OKjs",
+            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjdXJyZW50VGltZSI6MTcwNDkzODU5NTIyNSwicGxhdElkIjoiMSIsInBob25lIjoiMTcxOTg2MzMxNjkiLCJsZXZlbCI6IjMiLCJpc3MiOiJhdXRoMCIsInRlbmFudElkIjoiNjRGODQ5RjI1MzQzQUIzRTBBODhEQjhCIiwibUlkIjoiNjA5MWUzZWNlYzQ5NGUxOTlmNTg3OWRkNTRkMGQ5NDUiLCJ1c2VyVHlwZSI6IjEiLCJ1c2VyTmFtZSI6IjE3MTk4NjMzMTY5IiwiZXhwIjoxNzA0OTgxNzk1LCJzdXBlckFkbWluIjoiMCJ9.FZQILVmLwuhGcwm1S_owc2_0heIwl3NwmqsvRp_OKjs",
         userAgent: "ANDROID_2.0,11,OPPO_PDAM10",
         cityCode: "440305",
         acceptLanguage: "zh",
@@ -107,7 +118,7 @@ class MyApp extends ConsumerWidget {
       theme: themeNotifier.getTheme(),
       darkTheme: themeNotifier.getTheme(isDarkMode: true),
       themeMode: themeNotifier.getThemeMode(),
-      home: AwardWithdrawalPage(),
+      home: initPage,
       onGenerateRoute: Routes.router.generator,
       navigatorKey: navigatorKey,
       builder: (BuildContext context, Widget? child) {

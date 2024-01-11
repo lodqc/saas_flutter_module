@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:saas_flutter_module/bean/center_data_entity.dart';
+import 'package:saas_flutter_module/bean/get_auth_code_entity.dart';
 import 'package:saas_flutter_module/bean/ready_apply_cash_entity.dart';
 import 'package:saas_flutter_module/net/dio_utils.dart';
 
@@ -37,10 +38,12 @@ class ReadyApplyCashEntityNotifier
   }
 
   //发送提现短信验证码
-  sendCashSms(String phone) {
-    DioUtils.instance.providerRequest<Object>(
-        Method.post, "cloud_manage/managerWallet/sendCashSmsCode/$phone",
-        onSuccess: (data) {
+  getAuthCode(String phone) {
+    DioUtils.instance
+        .providerRequest<Object>(Method.post, "cloud_manage/invite/getAuthCode",
+            params: GetAuthCodeEntity()
+              ..phone = phone
+              ..type = 11, onSuccess: (data) {
       startTimer();
     });
   }
@@ -53,7 +56,7 @@ class ReadyApplyCashEntityNotifier
   }
 
   void calculate(String text) {
-    var mAmount = double.tryParse(text) ?? 0.0;
+    var mAmount = int.tryParse(text) ?? 0;
     var taxRate = state?.taxRate ?? 0.0;
     var amountReceived = mAmount * taxRate;
     var handlingFee = mAmount - amountReceived;
@@ -85,7 +88,7 @@ class ReadyApplyCashEntityNotifier
 
   void setStatus({
     String? accountName,
-    double? amount,
+    int? amount,
     String? bank,
     String? bankChild,
     String? bankNum,

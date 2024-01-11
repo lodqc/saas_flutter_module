@@ -209,7 +209,7 @@ class _AwardWithdrawalPageState extends ConsumerState<AwardWithdrawalPage> {
                     data?? "0.00";
                 var read = ref.read(awardWithdrawalProvider.notifier);
                 read.calculate(_amountController.text);
-                read.setStatus(amount: double.tryParse(_amountController.text));
+                read.setStatus(amount: int.tryParse(_amountController.text));
               },
             ),
             bottom: 81,
@@ -225,7 +225,7 @@ class _AwardWithdrawalPageState extends ConsumerState<AwardWithdrawalPage> {
               onChanged: (text) {
                 var read = ref.read(awardWithdrawalProvider.notifier);
                 read.calculate(text);
-                read.setStatus(amount: double.tryParse(text));
+                read.setStatus(amount: int.tryParse(text));
               },
             ),
             left: 23,
@@ -346,7 +346,7 @@ class _AwardWithdrawalPageState extends ConsumerState<AwardWithdrawalPage> {
                     } else {
                       ref
                           .read(awardWithdrawalProvider.notifier)
-                          .sendCashSms(_phoneController.text);
+                          .getAuthCode(_phoneController.text);
                     }
                   }
                 }),
