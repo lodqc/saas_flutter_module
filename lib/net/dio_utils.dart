@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:saas_flutter_module/res/constant.dart';
 import 'package:saas_flutter_module/util/log_utils.dart';
+import 'package:saas_flutter_module/util/toast_utils.dart';
 import 'base_entity.dart';
 import 'error_handle.dart';
 
@@ -140,16 +141,16 @@ class DioUtils {
     return response;
   }
 
-  providerRequest<T>(
-      Method method,
-      String url, {
-        NetSuccessCallback<T?>? onSuccess,
-        NetErrorCallback? onError,
-        Object? params,
-        Map<String, dynamic>? queryParameters,
-        CancelToken? cancelToken,
-        Options? options,
-      }) async {
+  Future<T?> providerRequest<T>(
+    Method method,
+    String url, {
+    NetSuccessCallback<T?>? onSuccess,
+    NetErrorCallback? onError,
+    Object? params,
+    Map<String, dynamic>? queryParameters,
+    CancelToken? cancelToken,
+    Options? options,
+  }) async {
     final cancelToken = CancelToken();
     final response = await requestNetwork<T>(method, url,
         onSuccess: onSuccess,
@@ -237,6 +238,7 @@ class DioUtils {
     }
     Log.e('接口请求异常： code: $code, mag: $msg');
     onError?.call(code, msg);
+    Toast.show(msg);
   }
 }
 

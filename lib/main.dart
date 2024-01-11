@@ -42,37 +42,45 @@ void aMapPage() => runApp(AMapPage());
 class MyApp extends ConsumerWidget {
   MyApp({super.key}) {
     Log.init();
-    initDio();
+    initDioFormNative();
     Routes.initRoutes();
   }
-
   static GlobalKey<NavigatorState> navigatorKey = GlobalKey();
+  void initDioFormNative() {
+    // FlutterToNative().getNetHeaderBean().then((data) {
+    //   initDio(data);
+    // }, onError: (error) {
+    //   Log.e(error);
+    // });
+    initDio(NetHeaderBean(
+        authorization:
+        "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjdXJyZW50VGltZSI6MTcwNDkzODU5NTIyNSwicGxhdElkIjoiMSIsInBob25lIjoiMTcxOTg2MzMxNjkiLCJsZXZlbCI6IjMiLCJpc3MiOiJhdXRoMCIsInRlbmFudElkIjoiNjRGODQ5RjI1MzQzQUIzRTBBODhEQjhCIiwibUlkIjoiNjA5MWUzZWNlYzQ5NGUxOTlmNTg3OWRkNTRkMGQ5NDUiLCJ1c2VyVHlwZSI6IjEiLCJ1c2VyTmFtZSI6IjE3MTk4NjMzMTY5IiwiZXhwIjoxNzA0OTgxNzk1LCJzdXBlckFkbWluIjoiMCJ9.FZQILVmLwuhGcwm1S_owc2_0heIwl3NwmqsvRp_OKjs",
+        userAgent: "ANDROID_2.0,11,OPPO_PDAM10",
+        cityCode: "440305",
+        acceptLanguage: "zh",
+        baseUrl: "https://t-cloud-manage-api.ehuandian.net/"));
+  }
 
-  void initDio() {
-    FlutterToNative().getNetHeaderBean().then((data) {
-      final List<Interceptor> interceptors = <Interceptor>[];
+  void initDio(NetHeaderBean data) {
+    final List<Interceptor> interceptors = <Interceptor>[];
 
-      /// 统一添加身份验证请求头
-      interceptors.add(AuthInterceptor(data));
+    /// 统一添加身份验证请求头
+    interceptors.add(AuthInterceptor(data));
 
-      /// 刷新Token
-      interceptors.add(TokenInterceptor());
+    /// 刷新Token
+    interceptors.add(TokenInterceptor());
 
-      /// 打印Log(生产模式去除)
-      if (!Constant.inProduction) {
-        interceptors.add(LoggingInterceptor());
-      }
+    /// 打印Log(生产模式去除)
+    if (!Constant.inProduction) {
+      interceptors.add(LoggingInterceptor());
+    }
 
-      /// 适配数据(根据自己的数据结构，可自行选择添加)
-      interceptors.add(AdapterInterceptor());
-      // https://t-cloud-manage-api.ehuandian.net/cloud_manage/login
-      configDio(
-        baseUrl: data.baseUrl,
-        interceptors: interceptors,
-      );
-    }, onError: (error) {
-      Log.e(error);
-    });
+    /// 适配数据(根据自己的数据结构，可自行选择添加)
+    interceptors.add(AdapterInterceptor());
+    configDio(
+      baseUrl: data.baseUrl,
+      interceptors: interceptors,
+    );
   }
 
   @override

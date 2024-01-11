@@ -21,6 +21,7 @@ class MyTextField extends StatefulWidget {
       this.isShowDelete = false,
       this.getVCode,
       this.keyName,
+      this.onChanged,
       this.style,
       this.hintStyle});
 
@@ -30,6 +31,7 @@ class MyTextField extends StatefulWidget {
   final TextInputType keyboardType;
   final String hintText;
   final FocusNode? focusNode;
+  final ValueChanged<String>? onChanged;
   final bool isInputPwd;
   final bool isShowDelete;
   final Future<bool> Function()? getVCode;
@@ -114,11 +116,12 @@ class _MyTextFieldState extends State<MyTextField> {
       textInputAction: TextInputAction.done,
       keyboardType: widget.keyboardType,
       style: widget.style,
+      onChanged: widget.onChanged,
       // 数字、手机号限制格式为0到9， 密码限制不包含汉字
       inputFormatters: (widget.keyboardType == TextInputType.number ||
               widget.keyboardType == TextInputType.phone)
-          ? [FilteringTextInputFormatter.allow(RegExp('[0-9]'))]
-          : [FilteringTextInputFormatter.deny(RegExp('[\u4e00-\u9fa5]'))],
+          ? [FilteringTextInputFormatter.allow(RegExp('[0-9Xx]'))]
+          : null,
       decoration: InputDecoration(
         contentPadding: const EdgeInsets.symmetric(vertical: 16.0),
         hintText: widget.hintText,

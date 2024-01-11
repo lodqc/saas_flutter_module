@@ -4,18 +4,6 @@ import 'package:saas_flutter_module/bean/login_body_bean.dart';
 import 'package:saas_flutter_module/bean/login_entity.dart';
 import 'package:saas_flutter_module/net/dio_utils.dart';
 
-final loginNetProvider = FutureProvider.autoDispose((ref) {
-  return DioUtils.instance.providerAutoRequest<LoginEntity>(
-    ref,
-    Method.post,
-    "cloud_manage/login",
-    params: LoginBodyBean(
-        platId: 1,
-        userName: '18138819493@swap.com',
-        pwd: 'e10adc3949ba59abbe56e057f20f883e'),
-  );
-});
-
 final batteryAlarmProvider =
 StateNotifierProvider<BatteryAlarmNotifier, List<BatteryAlarmBeanContent>>(
         (ref) {
