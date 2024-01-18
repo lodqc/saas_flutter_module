@@ -48,6 +48,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterToNativeGetCodec(void);
 /// @return `nil` only when `error != nil`.
 - (nullable FLTNetHeaderBean *)getNetHeaderBeanWithError:(FlutterError *_Nullable *_Nonnull)error;
 - (void)navigationWithError:(FlutterError *_Nullable *_Nonnull)error;
+- (void)scanWithError:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
 extern void SetUpFLTFlutterToNative(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FLTFlutterToNative> *_Nullable api);
@@ -58,6 +59,7 @@ NSObject<FlutterMessageCodec> *FLTNativeToFlutterGetCodec(void);
 @interface FLTNativeToFlutter : NSObject
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
 - (void)setBatteryMapBeanBean:(FLTBatteryMapBean *)bean completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)setCheckInSnSn:(NSString *)sn completion:(void (^)(FlutterError *_Nullable))completion;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -183,6 +183,28 @@ class FlutterToNative {
       return;
     }
   }
+
+  Future<void> scan() async {
+    const String __pigeon_channelName = 'dev.flutter.pigeon.saas_flutter_module.FlutterToNative.scan';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(null) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
 }
 
 class _NativeToFlutterCodec extends StandardMessageCodec {
@@ -213,6 +235,8 @@ abstract class NativeToFlutter {
 
   void setBatteryMapBean(BatteryMapBean bean);
 
+  void setCheckInSn(String sn);
+
   static void setup(NativeToFlutter? api, {BinaryMessenger? binaryMessenger}) {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
@@ -230,6 +254,31 @@ abstract class NativeToFlutter {
               'Argument for dev.flutter.pigeon.saas_flutter_module.NativeToFlutter.setBatteryMapBean was null, expected non-null BatteryMapBean.');
           try {
             api.setBatteryMapBean(arg_bean!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.saas_flutter_module.NativeToFlutter.setCheckInSn', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.saas_flutter_module.NativeToFlutter.setCheckInSn was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final String? arg_sn = (args[0] as String?);
+          assert(arg_sn != null,
+              'Argument for dev.flutter.pigeon.saas_flutter_module.NativeToFlutter.setCheckInSn was null, expected non-null String.');
+          try {
+            api.setCheckInSn(arg_sn!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);

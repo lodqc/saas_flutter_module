@@ -397,6 +397,8 @@ public class AndroidPigeon {
 
     void navigation();
 
+    void scan();
+
     /** The codec used by FlutterToNative. */
     static @NonNull MessageCodec<Object> getCodec() {
       return FlutterToNativeCodec.INSTANCE;
@@ -435,6 +437,28 @@ public class AndroidPigeon {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   api.navigation();
+                  wrapped.add(0, null);
+                }
+ catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.saas_flutter_module.FlutterToNative.scan", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  api.scan();
                   wrapped.add(0, null);
                 }
  catch (Throwable exception) {
@@ -496,6 +520,26 @@ public class AndroidPigeon {
               binaryMessenger, channelName, getCodec());
       channel.send(
           new ArrayList<Object>(Collections.singletonList(beanArg)),
+          channelReply -> {
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(new FlutterError((String) listReply.get(0), (String) listReply.get(1), (String) listReply.get(2)));
+              } else {
+                result.success(null);
+              }
+            }  else {
+              result.error(createConnectionError(channelName));
+            } 
+          });
+    }
+    public void setCheckInSn(@NonNull String snArg, @NonNull Result<Void> result) {
+      final String channelName = "dev.flutter.pigeon.saas_flutter_module.NativeToFlutter.setCheckInSn";
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger, channelName, getCodec());
+      channel.send(
+          new ArrayList<Object>(Collections.singletonList(snArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;

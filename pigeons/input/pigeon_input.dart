@@ -27,10 +27,12 @@ class BatteryMapBean {
 abstract class FlutterToNative {
   NetHeaderBean getNetHeaderBean();
   void navigation();
+  void scan();
 }
 
 // 原生调用Flutter Flutter去实现
 @FlutterApi()
 abstract class NativeToFlutter {
   void setBatteryMapBean(BatteryMapBean bean);
+  void setCheckInSn(String sn);
 }

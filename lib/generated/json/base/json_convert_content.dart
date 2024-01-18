@@ -6,6 +6,7 @@
 import 'package:flutter/material.dart' show debugPrint;
 import 'package:saas_flutter_module/bean/battery_alarm_bean_entity.dart';
 import 'package:saas_flutter_module/bean/center_data_entity.dart';
+import 'package:saas_flutter_module/bean/check_in_entity.dart';
 import 'package:saas_flutter_module/bean/get_auth_code_entity.dart';
 import 'package:saas_flutter_module/bean/login_entity.dart';
 import 'package:saas_flutter_module/bean/ready_apply_cash_entity.dart';
@@ -144,6 +145,10 @@ class JsonConvert {
       return data.map<CenterDataEntity>((Map<String, dynamic> e) =>
           CenterDataEntity.fromJson(e)).toList() as M;
     }
+    if (<CheckInEntity>[] is M) {
+      return data.map<CheckInEntity>((Map<String, dynamic> e) =>
+          CheckInEntity.fromJson(e)).toList() as M;
+    }
     if (<GetAuthCodeEntity>[] is M) {
       return data.map<GetAuthCodeEntity>((Map<String, dynamic> e) =>
           GetAuthCodeEntity.fromJson(e)).toList() as M;
@@ -180,6 +185,7 @@ class JsonConvertClassCollection {
     (BatteryAlarmBeanEntity).toString(): BatteryAlarmBeanEntity.fromJson,
     (BatteryAlarmBeanContent).toString(): BatteryAlarmBeanContent.fromJson,
     (CenterDataEntity).toString(): CenterDataEntity.fromJson,
+    (CheckInEntity).toString(): CheckInEntity.fromJson,
     (GetAuthCodeEntity).toString(): GetAuthCodeEntity.fromJson,
     (LoginEntity).toString(): LoginEntity.fromJson,
     (ReadyApplyCashEntity).toString(): ReadyApplyCashEntity.fromJson,

@@ -1,32 +1,49 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:oktoast/oktoast.dart';
+import 'package:saas_flutter_module/checkin/check_in_provider.dart';
 import 'package:saas_flutter_module/checkin/check_in_router.dart';
+import 'package:saas_flutter_module/plugins/SaasPlugin.dart';
+import 'package:saas_flutter_module/plugins/pigeon_out.dart';
 import 'package:saas_flutter_module/res/resources.dart';
 import 'package:saas_flutter_module/router/fluro_navigator.dart';
+import 'package:saas_flutter_module/util/log_utils.dart';
 import 'package:saas_flutter_module/util/other_utils.dart';
 import 'package:saas_flutter_module/widgets/my_app_bar.dart';
 import 'package:saas_flutter_module/widgets/my_button.dart';
 import 'package:saas_flutter_module/widgets/my_scroll_view.dart';
 import 'package:saas_flutter_module/widgets/my_text_field.dart';
 
-class CheckInPage extends StatefulWidget {
+class CheckInPage extends ConsumerStatefulWidget {
   CheckInPage({Key? key}) : super(key: key);
 
   @override
   _CheckInPageState createState() => _CheckInPageState();
 }
 
-class _CheckInPageState extends State<CheckInPage> {
+class _CheckInPageState extends ConsumerState<CheckInPage> {
   final TextEditingController _snController = TextEditingController();
   final FocusNode _nodeText1 = FocusNode();
 
   @override
+  void initState() {
+    super.initState();
+    ref.read(checkInProvider.notifier).init();
+    NativeToFlutter.setup(SaasPlugin(checkInCallback: (data) {
+      showToast(data);
+    }, batteryMapCallback: (data) {
+      Log.e(data.toString());
+      ref.read(checkInProvider.notifier).setMapBean(data);
+    }));
+  }
+
+  @override
   Widget build(BuildContext context) {
+    var entity = ref.watch(checkInProvider);
     return Scaffold(
       body: MyScrollView(
         keyboardConfig:
-        Utils.getKeyboardActionsConfig(context, <FocusNode>[_nodeText1]),
+            Utils.getKeyboardActionsConfig(context, <FocusNode>[_nodeText1]),
         children: [
           Container(
             child: Stack(
@@ -34,18 +51,13 @@ class _CheckInPageState extends State<CheckInPage> {
                 Container(
                   decoration: BoxDecoration(
                       gradient: LinearGradient(colors: [
-                        Colours.color_FF75BAFF,
-                        Colours.color_FFE8F6FF
-                      ],
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter)),
+                    Colours.color_FF75BAFF,
+                    Colours.color_FFE8F6FF
+                  ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
                   height: 224,
                 ),
                 Container(
-                  height: 44 + MediaQuery
-                      .of(context)
-                      .padding
-                      .top,
+                  height: 44 + MediaQuery.of(context).padding.top,
                   child: MyAppBar(
                     title: "巡检打卡",
                     backgroundColor: Colors.transparent,
@@ -62,20 +74,21 @@ class _CheckInPageState extends State<CheckInPage> {
                   top: 108,
                 ),
                 Positioned(
-                  child: Text(
-                    "叶大钊",
-                    style: TextStyles.color_FF222222_20M,
+                  child: Row(
+                    children: [
+                      Text(
+                        entity?.name ?? "",
+                        style: TextStyles.color_FF222222_20M,
+                      ),
+                      Gaps.hGap8,
+                      Text(
+                        entity?.cityName ?? "",
+                        style: TextStyles.text12N,
+                      )
+                    ],
                   ),
                   left: 72,
                   top: 114,
-                ),
-                Positioned(
-                  child: Text(
-                    "深圳市",
-                    style: TextStyles.text12N,
-                  ),
-                  left: 140,
-                  top: 122,
                 ),
                 Container(
                   height: 160,
@@ -127,12 +140,12 @@ class _CheckInPageState extends State<CheckInPage> {
                                 constraints: BoxConstraints.expand(),
                                 child: Stack(
                                   alignment:
-                                  Alignment.center, //指定未定位或部分定位widget的对齐方式
+                                      Alignment.center, //指定未定位或部分定位widget的对齐方式
                                   children: <Widget>[
                                     Positioned(
                                       top: 24,
                                       child: Text(
-                                        "48",
+                                        entity?.monthClockIn?.toString() ?? "0",
                                         style: TextStyles.color_FF222222_28M,
                                       ),
                                     ),
@@ -156,12 +169,12 @@ class _CheckInPageState extends State<CheckInPage> {
                                 constraints: BoxConstraints.expand(),
                                 child: Stack(
                                   alignment:
-                                  Alignment.center, //指定未定位或部分定位widget的对齐方式
+                                      Alignment.center, //指定未定位或部分定位widget的对齐方式
                                   children: <Widget>[
                                     Positioned(
                                       top: 24,
                                       child: Text(
-                                        "7",
+                                        entity?.dayClockIn?.toString() ?? "0",
                                         style: TextStyles.color_FF222222_28M,
                                       ),
                                     ),
@@ -217,12 +230,18 @@ class _CheckInPageState extends State<CheckInPage> {
                             Expanded(
                               child: MyTextField(
                                 controller: _snController,
-                                keyboardType: TextInputType.number,
+                                keyboardType: TextInputType.url,
+                                isShowDelete: true,
                                 hintText: "扫电柜码或输入电柜SN",
                               ),
                               flex: 1,
                             ),
-                            Images.ic_check_in_1
+                            Gaps.hGap16,
+                            InkWell(
+                                child: Images.ic_check_in_1,
+                                onTap: () {
+                                  FlutterToNative().scan();
+                                })
                           ],
                         ),
                       ),
@@ -240,11 +259,13 @@ class _CheckInPageState extends State<CheckInPage> {
                         padding: EdgeInsets.only(top: 12, left: 8),
                         child: Row(
                           children: [
-                            Images.ic_check_in_2,
+                            entity?.bean == null
+                                ? Images.ic_check_in_5
+                                : Images.ic_check_in_2,
                             Padding(
                               padding: EdgeInsets.only(left: 4),
                               child: Text(
-                                "广东深圳市南山区深圳前海大道前海嘉里中心2栋",
+                                entity?.bean == null ? "无法获取您的定位" : entity?.bean?.address??"",
                                 style: TextStyles.text12N,
                               ),
                             )
@@ -268,61 +289,61 @@ class _CheckInPageState extends State<CheckInPage> {
       builder: (BuildContext context) {
         return Dialog(
             child: Container(
-              width: 311,
-              height: 318,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(4),
-                  color: Colours.color_FFFFFFFF),
-              child: Column(
-                children: [
-                  Images.ic_check_in_3,
-                  Padding(
-                    padding: EdgeInsets.only(top: 24),
-                    child: Text(
-                      "打卡成功！",
-                      style: TextStyles.color_FF222222_18M,
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 12),
-                    child: Text(
-                      "今日已完成该电柜巡检。",
-                      style: TextStyles.color_FF333333_14N,
-                    ),
-                  ),
-                  Visibility(
-                    child: Text(
-                      "电柜SN：S0200BT22900002",
-                      style: TextStyles.color_FF333333_14N,
-                    ),
-                    visible: true,
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Container(),
-                  ),
-                  InkWell(
-                    child: Container(
-                      width: 311,
-                      height: 56,
-                      decoration: BoxDecoration(
-                          border: Border(
-                              top: BorderSide(
-                                  color: Colours.color_FFF0F0F0, width: 1))),
-                      child: Center(
-                        child: Text(
-                          "确认",
-                          style: TextStyles.text16N,
-                        ),
-                      ),
-                    ),
-                    onTap: () {
-                      Navigator.of(context).pop(true);
-                    },
-                  )
-                ],
+          width: 311,
+          height: 318,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(4),
+              color: Colours.color_FFFFFFFF),
+          child: Column(
+            children: [
+              Images.ic_check_in_3,
+              Padding(
+                padding: EdgeInsets.only(top: 24),
+                child: Text(
+                  "打卡成功！",
+                  style: TextStyles.color_FF222222_18M,
+                ),
               ),
-            ));
+              Padding(
+                padding: EdgeInsets.only(top: 12),
+                child: Text(
+                  "今日已完成该电柜巡检。",
+                  style: TextStyles.color_FF333333_14N,
+                ),
+              ),
+              Visibility(
+                child: Text(
+                  "电柜SN：S0200BT22900002",
+                  style: TextStyles.color_FF333333_14N,
+                ),
+                visible: true,
+              ),
+              Expanded(
+                flex: 1,
+                child: Container(),
+              ),
+              InkWell(
+                child: Container(
+                  width: 311,
+                  height: 56,
+                  decoration: BoxDecoration(
+                      border: Border(
+                          top: BorderSide(
+                              color: Colours.color_FFF0F0F0, width: 1))),
+                  child: Center(
+                    child: Text(
+                      "确认",
+                      style: TextStyles.text16N,
+                    ),
+                  ),
+                ),
+                onTap: () {
+                  Navigator.of(context).pop(true);
+                },
+              )
+            ],
+          ),
+        ));
       },
     );
   }

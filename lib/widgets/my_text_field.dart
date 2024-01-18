@@ -162,8 +162,8 @@ class _MyTextFieldState extends State<MyTextField> {
           child: LoadAssetImage(
             'qyg_shop_icon_delete',
             key: Key('${widget.keyName}_delete'),
-            width: 18.0,
-            height: 40.0,
+            width: 16,
+            height: 16,
           ),
           onTap: () => widget.controller.text = '',
         ),

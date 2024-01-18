@@ -195,6 +195,23 @@ void SetUpFLTFlutterToNative(id<FlutterBinaryMessenger> binaryMessenger, NSObjec
       [channel setMessageHandler:nil];
     }
   }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.saas_flutter_module.FlutterToNative.scan"
+        binaryMessenger:binaryMessenger
+        codec:FLTFlutterToNativeGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(scanWithError:)], @"FLTFlutterToNative api (%@) doesn't respond to @selector(scanWithError:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        FlutterError *error;
+        [api scanWithError:&error];
+        callback(wrapResult(nil, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
 }
 @interface FLTNativeToFlutterCodecReader : FlutterStandardReader
 @end
@@ -264,6 +281,25 @@ NSObject<FlutterMessageCodec> *FLTNativeToFlutterGetCodec(void) {
       binaryMessenger:self.binaryMessenger
       codec:FLTNativeToFlutterGetCodec()];
   [channel sendMessage:@[arg_bean ?: [NSNull null]] reply:^(NSArray<id> *reply) {
+    if (reply != nil) {
+      if (reply.count > 1) {
+        completion([FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);
+      } else {
+        completion(nil);
+      }
+    } else {
+      completion(createConnectionError(channelName));
+    } 
+  }];
+}
+- (void)setCheckInSnSn:(NSString *)arg_sn completion:(void (^)(FlutterError *_Nullable))completion {
+  NSString *channelName = @"dev.flutter.pigeon.saas_flutter_module.NativeToFlutter.setCheckInSn";
+  FlutterBasicMessageChannel *channel =
+    [FlutterBasicMessageChannel
+      messageChannelWithName:channelName
+      binaryMessenger:self.binaryMessenger
+      codec:FLTNativeToFlutterGetCodec()];
+  [channel sendMessage:@[arg_sn ?: [NSNull null]] reply:^(NSArray<id> *reply) {
     if (reply != nil) {
       if (reply.count > 1) {
         completion([FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);

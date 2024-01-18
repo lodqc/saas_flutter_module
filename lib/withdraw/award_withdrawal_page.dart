@@ -223,9 +223,13 @@ class _AwardWithdrawalPageState extends ConsumerState<AwardWithdrawalPage> {
               hintStyle: TextStyles.color_FFC2C2C2_24N,
               style: TextStyles.color_FF222222_24M,
               onChanged: (text) {
-                var read = ref.read(awardWithdrawalProvider.notifier);
-                read.calculate(text);
-                read.setStatus(amount: int.tryParse(text));
+                if(text.startsWith("0")){
+                  _amountController.text = text.substring(1);
+                }else{
+                  var read = ref.read(awardWithdrawalProvider.notifier);
+                  read.calculate(text);
+                  read.setStatus(amount: int.tryParse(text));
+                }
               },
             ),
             left: 23,

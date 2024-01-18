@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:saas_flutter_module/checkin/checkin_provider.dart';
+import 'package:saas_flutter_module/checkin/checkin_provider_demo.dart';
 import 'package:saas_flutter_module/res/resources.dart';
 import 'package:saas_flutter_module/widgets/my_app_bar.dart';
 import 'package:saas_flutter_module/widgets/my_refresh_list.dart';

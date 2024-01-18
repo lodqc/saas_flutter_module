@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:saas_flutter_module/amap.dart';
+import 'package:saas_flutter_module/checkin/checkin_page.dart';
 import 'package:saas_flutter_module/net/dio_utils.dart';
 import 'package:saas_flutter_module/net/intercept.dart';
 import 'package:saas_flutter_module/plugins/pigeon_out.dart';
@@ -23,8 +24,11 @@ void aMapPage() => runApp(AMapPage());
 @pragma('vm:entry-point')
 void withdrawPage() => initApp(AwardWithdrawalPage());
 
+@pragma('vm:entry-point')
+void checkInPage() => initApp(CheckInPage());
+
 Future<void> main() async {
-  initApp(AwardWithdrawalPage());
+  initApp(CheckInPage());
 }
 
 initApp(Widget initPage) {
@@ -54,22 +58,19 @@ class MyApp extends ConsumerWidget {
     initDioFormNative();
     Routes.initRoutes();
   }
-
-  static GlobalKey<NavigatorState> navigatorKey = GlobalKey();
-
   void initDioFormNative() {
-    // FlutterToNative().getNetHeaderBean().then((data) {
-    //   initDio(data);
-    // }, onError: (error) {
-    //   Log.e(error);
-    // });
-    initDio(NetHeaderBean(
-        authorization:
-            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjdXJyZW50VGltZSI6MTcwNDkzODU5NTIyNSwicGxhdElkIjoiMSIsInBob25lIjoiMTcxOTg2MzMxNjkiLCJsZXZlbCI6IjMiLCJpc3MiOiJhdXRoMCIsInRlbmFudElkIjoiNjRGODQ5RjI1MzQzQUIzRTBBODhEQjhCIiwibUlkIjoiNjA5MWUzZWNlYzQ5NGUxOTlmNTg3OWRkNTRkMGQ5NDUiLCJ1c2VyVHlwZSI6IjEiLCJ1c2VyTmFtZSI6IjE3MTk4NjMzMTY5IiwiZXhwIjoxNzA0OTgxNzk1LCJzdXBlckFkbWluIjoiMCJ9.FZQILVmLwuhGcwm1S_owc2_0heIwl3NwmqsvRp_OKjs",
-        userAgent: "ANDROID_2.0,11,OPPO_PDAM10",
-        cityCode: "440305",
-        acceptLanguage: "zh",
-        baseUrl: "https://t-cloud-manage-api.ehuandian.net/"));
+    FlutterToNative().getNetHeaderBean().then((data) {
+      initDio(data);
+    }, onError: (error) {
+      Log.e(error);
+    });
+    // initDio(NetHeaderBean(
+    //     authorization:
+    //         "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjdXJyZW50VGltZSI6MTcwNTU0MjY0NjcyMSwicGxhdElkIjoiMSIsInBob25lIjoiMTcxOTg2MzMxNjkiLCJsZXZlbCI6IjMiLCJpc3MiOiJhdXRoMCIsInRlbmFudElkIjoiNjRGODQ5RjI1MzQzQUIzRTBBODhEQjhCIiwibUlkIjoiNjA5MWUzZWNlYzQ5NGUxOTlmNTg3OWRkNTRkMGQ5NDUiLCJ1c2VyVHlwZSI6IjEiLCJ1c2VyTmFtZSI6IjE3MTk4NjMzMTY5IiwiZXhwIjoxNzA1NTg1ODQ2LCJzdXBlckFkbWluIjoiMCJ9.e494DPoba5p__BT9s5XCZ_aKmfpih8JA-W0B_tUPRTQ",
+    //     userAgent: "ANDROID_2.0,11,OPPO_PDAM10",
+    //     cityCode: "440305",
+    //     acceptLanguage: "zh",
+    //     baseUrl: "https://t-cloud-manage-api.ehuandian.net/"));
   }
 
   void initDio(NetHeaderBean data) {
@@ -120,7 +121,6 @@ class MyApp extends ConsumerWidget {
       themeMode: themeNotifier.getThemeMode(),
       home: initPage,
       onGenerateRoute: Routes.router.generator,
-      navigatorKey: navigatorKey,
       builder: (BuildContext context, Widget? child) {
         /// 保证文字大小不受手机系统设置影响 https://www.kikt.top/posts/flutter/layout/dynamic-text/
         return MediaQuery(
